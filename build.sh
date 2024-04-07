@@ -60,7 +60,7 @@ Max()
 Build()
 {
 	local source="${WORKDIR}/rbmerge.base.js"
-	local target="${WORKDIR}/rbmerge.js"
+	local target="${WORKDIR}/docs/js/rbmerge.js"
 
 	local first_line=$(grep -n 'let parts = "<' "$source" | grep -Po '^\d+')
 	[[ $first_line -gt 0 ]] || Die "failed to get index of first line to replace"

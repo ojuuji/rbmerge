@@ -4,6 +4,11 @@ on:
   push:
     paths: [build/rbmerge.js]
 
+  # Run after another workflow possibly edited rbmerge.js
+  workflow_run:
+    workflows: ["Build JS"]
+    types: [completed]
+
 jobs:
   minify:
     runs-on: ubuntu-latest

@@ -256,7 +256,7 @@ class RebrickableMerge {
 			desc += `${value.count} [${key}] ${value.name}`;
 		}
 
-		return `<tr>\n<td>${group[0].refPartNum}</td>\n<td>${total}</td>\n<td>\n${colors}\n</td>\n<td>${desc}</td>\n</tr>\n`;
+		return `<tr>\n<td><a href="https://rebrickable.com/parts/${group[0].refPartNum}/">${group[0].refPartNum}</a></td>\n<td>${total}</td>\n<td>\n${colors}\n</td>\n<td>${desc}</td>\n</tr>\n`;
 	}
 
 	render() {

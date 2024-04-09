@@ -2,7 +2,9 @@ name: Build JS
 
 on:
   push:
-    paths: [rbmerge.base.js]
+    paths:
+      - rbmerge.base.js
+      - 'data/*.csv'
 
 jobs:
   build:

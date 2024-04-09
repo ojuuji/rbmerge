@@ -1,0 +1,27 @@
+name: Update tables
+
+on:
+  schedule:
+    - cron: '22 7 * * *'  # daily at 7:22
+
+  # Allow to run this workflow manually from the Actions tab
+  workflow_dispatch: 
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: check out the repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.PAT }}
+
+      - name: fetch tables
+        run: ./data/fetch.sh
+
+      - name: commit tables
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          file_pattern: 'data/*.csv'
+          commit_message: "bot: update tables"

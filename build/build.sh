@@ -43,43 +43,39 @@ Build()
 	local source="${WORKDIR}/../rbmerge.base.js"
 	local target="${WORKDIR}/rbmerge.js"
 
-	local first_line=$(grep -n 'let parts = "<' "$source" | grep -Po '^\d+')
+	local first_line=$(grep -n 'const partsData = ' "$source" | grep -Po '^\d+')
 	[[ $first_line -gt 0 ]] || Die "failed to get index of first line to replace"
 
-	local last_line=$(grep -n 'let colors = "<' "$source" | grep -Po '^\d+')
+	local last_line=$(grep -n 'const colorsData = ' "$source" | grep -Po '^\d+')
 	[[ $last_line -gt 0 ]] || Die "failed to get index of last line to replace"
 
 	head -n$((first_line-1)) "$source" > "$target"
 
 	echo ":: building parts ..."
 
-	echo -en '\t\tlet parts = "' >> "$target"
+	echo -en '\t\tconst partsData = "' >> "$target"
 	sed -r '1d; s/(,[^,]+){2}$//; s/"//g' "${WORKDIR}/../data/parts.csv" | while IFS=, read -r part_num name; do
-		echo -n "${part_num},${name}\\n" >> "$target"
-	done
-	echo -e '".trim().split("\\n");\n' >> "$target"
+		echo "${part_num},${name}"
+	done | gzip -9n | base64 -w0 >> "$target"
+	echo '";' >> "$target"
 
 	echo ":: building part relationships ..."
 
-	echo -en '\t\tlet rels = "' >> "$target"
-	tail -n+2 "${WORKDIR}/../data/part_relationships.csv" | while IFS=, read -r rel_type child_part_num parent_part_num; do
-		echo -n "${rel_type},${child_part_num},${parent_part_num}\\n" >> "$target"
-	done
-	echo -e '".trim().split("\\n");\n' >> "$target"
+	echo -en '\t\tconst relsData = "' >> "$target"
+	tail -n+2 "${WORKDIR}/../data/part_relationships.csv" | gzip -9n | base64 -w0 >> "$target"
+	echo '";' >> "$target"
 
-	echo -en '\t\tlet relsEx = String.raw`' >> "$target"
-	tail -n+2 "${WORKDIR}/../data/part_relationships_ex.csv" | while IFS=, read -r rel_type child_part_num_regex parent_part_num; do
-		echo -n "${rel_type},${child_part_num_regex},${parent_part_num}\\n" >> "$target"
-	done
-	echo -e '`.split("\\\\n").filter(Boolean);\n' >> "$target"
+	echo -en '\t\tconst relsExData = "' >> "$target"
+	tail -n+2 "${WORKDIR}/../data/part_relationships_ex.csv" | gzip -9n | base64 -w0 >> "$target"
+	echo '";' >> "$target"
 
 	echo ":: building colors ..."
 
-	echo -en '\t\tlet colors = "' >> "$target"
+	echo -en '\t\tconst colorsData = "' >> "$target"
 	tail -n+2 "${WORKDIR}/../data/colors.csv" | while IFS=, read -r id name rgb is_trans; do
-		echo -n "${name},${rgb}\\n" >> "$target"
-	done
-	echo '".trim().split("\n");' >> "$target"
+		echo "${name},${rgb}"
+	done | gzip -9n | base64 -w0 >> "$target"
+	echo '";' >> "$target"
 
 	tail -n+$((last_line+1)) "$source" >> "$target"
 }
@@ -87,6 +83,8 @@ Build()
 ME_FULLPATH="$(readlink -f "$BASH_SOURCE")"
 ME="$(basename "$ME_FULLPATH")"
 WORKDIR="$(dirname "$ME_FULLPATH")"
+
+which base64 gzip > /dev/null
 
 Verify
 Build

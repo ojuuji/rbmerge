@@ -1,5 +1,16 @@
 var rebrickableMerge = (function() {
 
+const decompress = base64string => {
+	const bytes = Uint8Array.from(atob(base64string), c => c.charCodeAt(0));
+	const cs = new DecompressionStream('gzip');
+	const writer = cs.writable.getWriter();
+	writer.write(bytes);
+	writer.close();
+	return new Response(cs.readable).arrayBuffer().then(function (arrayBuffer) {
+		return new TextDecoder().decode(arrayBuffer);
+	});
+};
+
 const Rel = Object.freeze({
 	Alt      : 'A',
 	SubPart  : 'B',
@@ -12,49 +23,57 @@ const Rel = Object.freeze({
 const Key = (partNum, rel) => `${partNum}:${rel}`;
 
 class RebrickableMerge {
-	constructor() {
-		let parts = "<part_num>,<name>\n...".trim().split("\n");
-		let rels = "<rel_type>,<child_part_num>,<parent_part_num>\n...".trim().split("\n");
-		let relsEx = "<rel_type>,<child_part_num_regex>,<parent_part_num>\n...".trim().split("\n");
-		let colors = "<name>,<rgb>\n...".trim().split("\n");
+	async init() {
+		const partsData = "";   // <-- CAUTION! These four lines
+		const relsData = "";    // <-- are replaced by the script
+		const relsExData = "";  // <-- with actual base64-encoded
+		const colorsData = "";  // <-- then gzipped tables data
 
-		for (let i = 0; i < parts.length; i++) {
-			let part = parts[i];
+		// <part_num>,<name>\n...
+		const parts = (await decompress(partsData)).trim().split("\n");
+		for (const part of parts) {
 			let commaIdx = part.indexOf(',');
 			let [partNum, name] = [part.slice(0, commaIdx), part.slice(commaIdx + 1)];
 			this.names.set(partNum, name);
 		}
 
-		for (let i = 0; i < rels.length; i++) {
-			let [type, child, parent] = rels[i].split(',')
+		// <rel_type>,<child_part_num>,<parent_part_num>\n...
+		const rels = (await decompress(relsData)).trim().split("\n");
+		for (const rel of rels) {
+			let [type, child, parent] = rel.split(',')
 			if (type == Rel.Mold) {
 				[child, parent] = [parent, child];  // resolve to newest mold variation
 			}
 			this.rels.set(Key(child, type), parent);
 		}
 
-		for (let i = 0; i < relsEx.length; i++) {
-			let [type, child, parent] = relsEx[i].split(',')
+		// <rel_type>,<child_part_num_regex>,<parent_part_num>\n...
+		const relsEx = (await decompress(relsExData)).trim().split("\n");
+		for (const rel of relsEx) {
+			let [type, child, parent] = rel.split(',')
 			this.relsEx.get(type).push({regex: new RegExp(`^${child}$`), partNum: parent});
 		}
 
-		for (let i = 0; i < colors.length; i++) {
-			let color = colors[i];
+		// <name>,<rgb>\n...
+		const colors = (await decompress(colorsData)).trim().split("\n");
+		for (const color of colors) {
 			let commaIdx = color.indexOf(',');
 			let [name, hex] = [color.slice(0, commaIdx), color.slice(commaIdx + 1)];
 			this.colors.set(name, hex);
 		}
 	}
 
-	setup() {
-		if (this.init()) {
-			this.apply();
-			this.filter();
-			this.render();
-		}
+	async setup() {
+		this.init().then(() => {
+			if (this.parse()) {
+				this.apply();
+				this.filter();
+				this.render();
+			}
+		});
 	}
 
-	init() {
+	parse() {
 		let table = "";
 		if (document.getElementsByTagName('table').length == 1) {
 			table = document.getElementsByTagName('table')[0].innerHTML;

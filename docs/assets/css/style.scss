@@ -4,5 +4,9 @@
 @import "{{ site.theme }}";
 
 pre.highlight {
-  border:solid 1px #dce6f0
+  border: solid 1px #dce6f0
+}
+
+h1 + ul {
+  float: right
 }

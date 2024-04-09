@@ -26,4 +26,4 @@ jobs:
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
           file_pattern: docs/js/rbmerge.min.js
-          commit_message: "bot: minify rbmerge.min.js"
+          commit_message: "bot: commit minified rbmerge.min.js"

@@ -23,4 +23,4 @@ jobs:
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
           file_pattern: build/rbmerge.js
-          commit_message: "bot: build rbmerge.js"
+          commit_message: "bot: commit built rbmerge.js"

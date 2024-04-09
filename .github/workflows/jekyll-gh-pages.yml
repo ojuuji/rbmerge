@@ -5,11 +5,6 @@ on:
   push:
     paths: ['docs/**']
 
-  # Run after another workflow possibly edited /docs subdirectory
-  workflow_run:
-    workflows: ["Minify JS"]
-    types: [completed]
-
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 

@@ -53,6 +53,12 @@ Build()
 
 	echo ":: building parts ..."
 
+	# At the moment of switching tables data to gzip+base64 resulting JS size
+	# reduced from ~4.5mb to ~1.2mb. However, when serving to browser due to
+	# 'Content-Enconding: gzip' this only saved ~33kb. Well, still something.
+	# Plus no interference with JS escaping in string literals. Plus GitHub
+	# now does not refuse to open JS file in viewer.
+
 	echo -en '\t\tconst partsData = "' >> "$target"
 	sed -r '1d; s/(,[^,]+){2}$//; s/"//g' "${WORKDIR}/../data/parts.csv" | while IFS=, read -r part_num name; do
 		echo "${part_num},${name}"

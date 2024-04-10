@@ -6,7 +6,6 @@ RBmerge uses multiple CSV data tables from [Rebrickable Downloads](https://rebri
 
 Origin file `rbmerge.base.js` contains only placeholders for these tables. Run `build/build.sh` to extract actual data from the tables and embed it in the script. It saves resulting file as `build/rbmerge.js`. GitHub Workflow is configured to regenerate this file on modification of the origin file `rbmerge.base.js` or any of `data/*.csv` tables.
 
-Every modification of `build/rbmerge.js` triggers GitHub Workflow which minifies this script and stores result as `docs/js/rbmerge.min.js`. This is final version of the script, which is referenced in [installation guide](docs/readme.md#installation).
+Every modification of `build/rbmerge.js` triggers GitHub Workflow which minifies this script and stores result as `docs/js/rbmerge.min.js`. This is final version of the script, but it has to be published yet.
 
-Modification of files within `docs` directory triggers GitHub Workflow which deploys Jekyll site 
-https://ojuuji.github.io/rbmerge/.
+Modification of files within `docs` directory triggers GitHub Workflow, which deploys Jekyll site to GitHub Pages. This is the final step in the workflows chain. Once completed, the script can be referenced as https://ojuuji.github.io/rbmerge/js/rbmerge.min.js

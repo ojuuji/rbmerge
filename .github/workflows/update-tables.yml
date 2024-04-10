@@ -5,7 +5,7 @@ on:
     - cron: '22 7 * * *'  # daily at 7:22
 
   # Allow to run this workflow manually from the Actions tab
-  workflow_dispatch: 
+  workflow_dispatch:
 
 jobs:
   build:

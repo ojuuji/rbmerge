@@ -38,10 +38,22 @@ VerifyColors()
 	done | diff - "${WORKDIR}/fixed_colors.expected"
 }
 
+VerifyPrints()
+{
+	echo ":: verifying prints ..."
+
+	# grep all part_num which contain "pr" anywhere, except at the beginning, and do not end with "pr<num>"
+	grep -Eo '^[^,]+' "${WORKDIR}/../data/parts.csv" | grep '.pr' | grep -vP 'pr\d+$' | while read part_num; do
+		# ignore the ones which are already marked as prints
+		grep -Pq "^P,${part_num},\K.+" "${WORKDIR}/../data/part_relationships.csv" || echo "$part_num"
+	done | diff - <(grep -vPx '#.*|\s*' "${WORKDIR}/alnum_pr.expected")
+}
+
 ME_FULLPATH="$(readlink -f "$BASH_SOURCE")"
 ME="$(basename "$ME_FULLPATH")"
 WORKDIR="$(dirname "$ME_FULLPATH")"
 
 VerifyColors
+VerifyPrints
 
 echo ":: done"

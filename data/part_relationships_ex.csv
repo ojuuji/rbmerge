@@ -1,2 +1,3 @@
 rel_type,child_part_num_regex,parent_part_num
-T,973[a-z]\d\d.+,973c00
+P,(.+)pr\d+[a-z]*,$1
+T,973[a-z].+,973c00

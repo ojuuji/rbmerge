@@ -1,4 +1,4 @@
-var rebrickableMerge = (function() {
+var rbMerge = (function() {
 
 const decompress = base64string => {
 	const bytes = Uint8Array.from(atob(base64string), c => c.charCodeAt(0));
@@ -22,7 +22,7 @@ const Rel = Object.freeze({
 
 const Key = (partNum, rel) => `${partNum}:${rel}`;
 
-class RebrickableMerge {
+class RBmerge {
 	async init() {
 		const partsData = "";   // <-- CAUTION! These four lines
 		const relsData = "";    // <-- are replaced by the script
@@ -30,7 +30,7 @@ class RebrickableMerge {
 		const colorsData = "";  // <-- then gzipped tables data
 
 		// <part_num>,<name>\n...
-		const parts = (await decompress(partsData)).trim().split("\n");
+		const parts = (await decompress(partsData)).trim().split('\n');
 		for (const part of parts) {
 			let commaIdx = part.indexOf(',');
 			let [partNum, name] = [part.slice(0, commaIdx), part.slice(commaIdx + 1)];
@@ -38,7 +38,7 @@ class RebrickableMerge {
 		}
 
 		// <rel_type>,<child_part_num>,<parent_part_num>\n...
-		const rels = (await decompress(relsData)).trim().split("\n");
+		const rels = (await decompress(relsData)).trim().split('\n');
 		for (const rel of rels) {
 			let [type, child, parent] = rel.split(',')
 			if (type == Rel.Mold) {
@@ -48,14 +48,14 @@ class RebrickableMerge {
 		}
 
 		// <rel_type>,<child_part_num_regex>,<parent_part_num>\n...
-		const relsEx = (await decompress(relsExData)).trim().split("\n");
+		const relsEx = (await decompress(relsExData)).trim().split('\n');
 		for (const rel of relsEx) {
 			let [type, child, parent] = rel.split(',')
 			this.relsEx.get(type).push({regex: new RegExp(`^${child}$`), partNum: parent});
 		}
 
 		// <name>,<rgb>\n...
-		const colors = (await decompress(colorsData)).trim().split("\n");
+		const colors = (await decompress(colorsData)).trim().split('\n');
 		for (const color of colors) {
 			let commaIdx = color.indexOf(',');
 			let [name, hex] = [color.slice(0, commaIdx), color.slice(commaIdx + 1)];
@@ -63,14 +63,14 @@ class RebrickableMerge {
 		}
 	}
 
-	async setup() {
-		this.init().then(() => {
-			if (this.parse()) {
+	setup() {
+		if (this.parse()) {
+			this.init().then(() => {
 				this.apply();
 				this.filter();
 				this.render();
-			}
-		});
+			});
+		}
 	}
 
 	parse() {
@@ -103,11 +103,9 @@ class RebrickableMerge {
 				resolved = this.rels.get(Key(part.refPartNum, rel));
 				if (resolved === undefined) {
 					for (const {regex, partNum} of this.relsEx.get(rel)) {
-						if (part.refPartNum.startsWith("973c")) {
-							part.refPartNum = part.refPartNum;
-						}
-						if (regex.test(part.refPartNum)) {
-							resolved = partNum;
+						let replaced = part.refPartNum.replace(regex, partNum);
+						if (replaced != part.refPartNum) {
+							resolved = replaced;
 							break;
 						}
 					}
@@ -180,8 +178,7 @@ class RebrickableMerge {
 	apply() {
 		let map = new Map();
 
-		for (let i = 0; i < this.inventory.length; i++) {
-			let part = this.inventory[i];
+		for (const part of this.inventory) {
 			let resolved = this.resolve(part);
 
 			let list = map.get(resolved.refPartNum);
@@ -252,7 +249,7 @@ class RebrickableMerge {
 			// prevPartNum = part.partNum;
 			prevSortFactor = part.sortFactor;
 
-			colors += `${part.img} ${part.count} ${part.color}`; // ${this.hex2rgb(this.colors.get(part.color))} ${this.colors.get(part.color)}`;
+			colors += `${part.img} ${part.count} ${part.color}`;
 			colorsUniq.add(part.color);
 			
 			const partNumCount = countPerPartNum.has(part.partNum) ? countPerPartNum.get(part.partNum).count : 0;
@@ -297,7 +294,7 @@ class RebrickableMerge {
 		document.getElementsByTagName('tbody')[0].innerHTML = rows;
 	}
 
-	me = "rebrickable_merge";
+	me = "RBmerge";
 	names = new Map();
 	colors = new Map();
 	rels = new Map();
@@ -309,7 +306,7 @@ class RebrickableMerge {
 	filteredCount = 0;
 };
 
-return new RebrickableMerge();
+return new RBmerge();
 })();
 
-rebrickableMerge.setup();
+rbMerge.setup();

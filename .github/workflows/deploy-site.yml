@@ -1,4 +1,4 @@
-name: Deploy Jekyll site
+name: Deploy site
 
 on:
   # Runs on pushes within /docs subdirectory

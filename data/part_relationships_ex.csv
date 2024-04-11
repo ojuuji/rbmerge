@@ -1,3 +1,6 @@
 rel_type,child_part_num_regex,parent_part_num
 P,(.+)pr\d+[a-z]*,$1
-T,973[a-z].+,973c00
+T,973[c-h].+,973c00
+A,973b.+,973c00
+T,970[cdl].+,970c00
+A,970e.+,970c00

@@ -49,11 +49,18 @@ VerifyPrints()
 	done | diff - <(grep -vPx '#.*|\s*' "${WORKDIR}/alnum_pr.expected")
 }
 
+VerifyMinifigs()
+{
+	echo ":: verifying minifigs ..."
+	diff <(grep -Po '^97[03][a-z]' "${WORKDIR}/../data/parts.csv" | sort -u) <(grep -vPx '#.*|\s*' "${WORKDIR}/minifigs.expected" | sort)
+}
+
 ME_FULLPATH="$(readlink -f "$BASH_SOURCE")"
 ME="$(basename "$ME_FULLPATH")"
 WORKDIR="$(dirname "$ME_FULLPATH")"
 
 VerifyColors
 VerifyPrints
+VerifyMinifigs
 
 echo ":: done"

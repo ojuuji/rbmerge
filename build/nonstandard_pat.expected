@@ -1,0 +1,14 @@
+# T,(.+)pats?\d+(c01)?,$1
+16709pats01
+16709pats02
+16709pats12
+16709pats14
+16709pats22
+16709pats27pr0001
+16709pats37
+16709pats41
+64784pat01c01
+64784pat02c01
+
+# not a pattern
+Eyepatch

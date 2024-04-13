@@ -1,11 +1,11 @@
 # Format:
 # rel_type,child_part_num_regex,parent_part_num_repl
 
-# General rule for prints, verify.sh:VerifyPrints
+# General rule for prints, degradation covered by verify.sh:VerifyPrints
 P,(.+)pr\d+[a-z]*,$1
-# General rule for prints, verify.sh:VerifyPatterns
+# General rule for prints, degradation covered by verify.sh:VerifyPatterns
 T,(.+)pats?\d+(c01)?,$1
-# General rules for minifigs, verify.sh:VerifyMinifigs
+# General rules for minifigs, degradation covered by verify.sh:VerifyMinifigs
 T,973[c-h].+,973c00
 A,973b.+,973c00
 T,970[cdl].+,970c00

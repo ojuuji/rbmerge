@@ -99,10 +99,11 @@ M,92950,3455
 
 Rebrickable uses this relation in the build matching option _"Ignore mold variations in parts."_
 
-Newer mold not necessarily comes first. For example, here the newer one is [3007](https://rebrickable.com/parts/3007/):
+The successor part is not necessarily listed as `child_part_num`. And an older part is not necessarily listed as `parent_part_num`. Here are two examples in the form `child_part_num (year_from, year_to) -> parent_part_num (year_from, year_to)`:
 
 ```
-M,3007b,3007
+60608 (2007, <present>) -> 3854 (1978, 2008)
+3002a (1954, 1990) -> 3002 (1979, <present>)
 ```
 
 In case of multiple molds not all combinations are listed. For example, for parts [67695](https://rebrickable.com/parts/67695/), [93571](https://rebrickable.com/parts/93571/), [32174](https://rebrickable.com/parts/32174/) there are two rows:

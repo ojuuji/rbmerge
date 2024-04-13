@@ -41,7 +41,7 @@ tail -n+2 "${WORKDIR}/../data/part_relationships.csv" | gzip -9n | base64 -w0 >>
 echo '";' >> "$TARGET"
 
 echo -en '\t\tconst relsExData = "' >> "$TARGET"
-tail -n+2 "${WORKDIR}/../data/part_relationships_ex.csv" | gzip -9n | base64 -w0 >> "$TARGET"
+grep -vPx '#.*|\s*' "${WORKDIR}/../data/part_relationships_ex.csv" | gzip -9n | base64 -w0 >> "$TARGET"
 echo '";' >> "$TARGET"
 
 echo ":: building colors ..."

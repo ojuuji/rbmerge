@@ -1,9 +1,21 @@
 
+- [colors.csv](#colorscsv)
+- [parts.csv](#partscsv)
+- [part_relationships.csv](#part_relationshipscsv)
+  - [`A` - Alternate](#a---alternate)
+  - [`B` - Sub-Part](#b---sub-part)
+  - [`M` - Mold](#m---mold)
+  - [`P` - Print](#p---print)
+  - [`R` - Pair](#r---pair)
+  - [`T` - Pattern](#t---pattern)
+- [part_relationships_ex.csv](#part_relationships_excsv)
+
 All CSV files except `part_relationships_ex.csv` are downloaded from [https://rebrickable.com/downloads/](https://rebrickable.com/downloads/).
 
 # colors.csv
 
-This file contains table with the following three columns:
+This file contains table with the following four columns:
+
 ```
 id,name,rgb,is_trans
 ```
@@ -23,12 +35,38 @@ Examples:
 272,Dark Blue,0A3463,f
 ```
 
+# parts.csv
+
+This file contains table with the following four columns:
+
+```
+part_num,name,part_cat_id,part_material
+```
+
+`name` is the part name on Rebrickable.
+
+`part_cat_id` external reference (foreign key) to `id` in `part_categories.csv`.
+
+`part_material` is the material from which the part is made. Possible options:
+
+```
+Cardboard/Paper
+Cloth
+Flexible Plastic
+Foam
+Metal
+Plastic
+Rubber
+```
+
 # part_relationships.csv
 
 This file contains table with the following three columns:
+
 ```
 rel_type,child_part_num,parent_part_num
 ```
+
 Relation type is one of `ABMPRT`. They all are described below.
 
 ## `A` - Alternate
@@ -59,13 +97,29 @@ M,92950,3455
 
 [92950](https://rebrickable.com/parts/92950/) and [3455](https://rebrickable.com/parts/3455/) are essentially the same parts where 92950 is a newer mold. For 3455 Rebrickable says it is superseded by 92950.
 
+Rebrickable uses this relation in the build matching option _"Ignore mold variations in parts."_
+
 Newer mold not necessarily comes first. For example, here the newer one is [3007](https://rebrickable.com/parts/3007/):
 
 ```
 M,3007b,3007
 ```
 
-Rebrickable uses this relation in the build matching option _"Ignore mold variations in parts."_
+In case of multiple molds not all combinations are listed. For example, for parts [67695](https://rebrickable.com/parts/67695/), [93571](https://rebrickable.com/parts/93571/), [32174](https://rebrickable.com/parts/32174/) there are two rows:
+
+```
+M,93571,32174
+M,67695,32174
+```
+
+But there are no row `M,93571,67695`. For the info, `67695` is the latest mold.
+
+Moreover, alternative not necessarily points to the latest mold, and it may have molds too:
+
+```
+A,60176,32174
+M,89652,60176
+```
 
 ## `P` - Print
 
@@ -101,15 +155,19 @@ Rebrickable uses this relation along with relation `P` in the build matching opt
 
 This table defines extra relationships, not available on Rebrickable and maintained within RBmerge.
 
-As in `part_relationships.csv` it contains three columns with the same relation type column:
+As in `part_relationships.csv` it contains three columns:
+
 ```
 rel_type,child_part_num_regex,parent_part_num_repl
 ```
-However as a second column here can be used not only a part number but also a regular expression. This allows to apply relationship to multiple part numbers with a single row.
 
-To apply relationship, regex must match an entire part number. Wrapping with `^` and `$` is not required.
+This is where the similarities end. This file allows comments, staring with `#`, and blank lines. Any other line is expected to have relation i.e. there is no table header. So this is not really a CSV table.
 
-Third column is a replacement which can be either a part number or a string containing back references. For the first capture group it will be `$1` and so on.
+First column represents relation type and has the same meaning as in `part_relationships.csv`. As a second column here can be used not only a part number but also a regular expression. This allows to apply relationship to multiple part numbers using a single row.
+
+Relationship is applied only if regex matches an entire part number. Wrapping with `^` and `$` is not necessary and is always implied.
+
+Third column is a replacement, which can be either a part number or a string containing back references. For the first capture group back reference will be `$1` and so on.
 
 For example:
 

@@ -260,7 +260,12 @@ class RBmerge {
 
 		let desc = "";
 		if (countPerPartNum.size == 1) {
-			desc = group[0].name;
+			if (group[0].partNum == group[0].refPartNum) {
+				desc = group[0].name;
+			}
+			else {
+				desc = `[${group[0].partNum}] ${group[0].name}`;
+			}
 		}
 		else for (const [key, value] of countPerPartNum) {
 			if (desc.length > 0) {

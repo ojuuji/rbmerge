@@ -189,23 +189,10 @@ class RBmerge {
 		}
 
 		this.merged = [...map.values()];
-		this.merged.sort((l, r) => {
-			let lname = this.names.get(l[0].refPartNum);
-			if (lname === undefined) {
-				lname = l[0].name;
-				console.log(`${this.me}: failed to get name for refPartNum=${l[0].refPartNum}, will use collected name "${lname}" for partNum=${l[0].partNum}`);
-			}
-			let rname = this.names.get(r[0].refPartNum);
-			if (rname === undefined) {
-				rname = r[0].name;
-				console.log(`${this.me}: failed to get name for refPartNum=${r[0].refPartNum}, will use collected name "${rname}" for partNum=${r[0].partNum}`);
-			}
-			return lname.localeCompare(rname);
-		});
-
 		this.mergedCount = 0;
-		for (let i = 0; i < this.merged.length; i++) {
-			this.merged[i].sort((l, r) => {
+
+		for (const group of this.merged) {
+			group.sort((l, r) => {
 				if (l.sortFactor != r.sortFactor) {
 					return l.sortFactor - r.sortFactor;
 				}
@@ -218,8 +205,12 @@ class RBmerge {
 				return 0;
 			});
 
-			this.merged[i].forEach(part => this.mergedCount += part.count);
+			group.forEach(part => this.mergedCount += part.count);
 		}
+
+		this.merged.sort((l, r) => {
+			return l[0].name.localeCompare(r[0].name);
+		});
 	}
 
 	filter() {

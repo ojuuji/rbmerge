@@ -209,7 +209,22 @@ class RBmerge {
 		}
 
 		this.merged.sort((l, r) => {
-			return l[0].name.localeCompare(r[0].name);
+			// Make it smarter a bit so that for example "Brick 1 x 2" comes _before_ "Brick 1 x 16"
+			const lw = l[0].name.split(' ').reverse();
+			const rw = r[0].name.split(' ').reverse();
+			while (lw.length > 0 && rw.length > 0 && lw[lw.length - 1] == rw[rw.length - 1]) {
+				lw.pop();
+				rw.pop();
+			}
+			if (lw.length == 0 || rw.length == 0) {
+				return lw.length != 0 ? 1 : rw.length != 0 ? -1 : 0;
+			}
+			const ln = parseInt(lw[lw.length - 1]);
+			const rn = parseInt(rw[rw.length - 1]);
+			if (!isNaN(ln) && !isNaN(rn)) {
+				return ln - rn;
+			}
+			return lw[lw.length - 1].localeCompare(rw[rw.length - 1]);
 		});
 	}
 

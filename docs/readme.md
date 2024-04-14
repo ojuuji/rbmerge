@@ -81,7 +81,7 @@ When processing parts list, script resolves every part to so-called _reference_ 
 Part is resolved to the reference part if it meets any of these criteria:
 - it has different color but the same part number as the reference part
 - it is pattern, print, or an older mold variant of the reference part
-- it is alternate to reference part - which one is the reference part in defined by underlying data table (technical details can be read [here](https://github.com/ojuuji/rbmerge/tree/master/data), `parent_part_num` from `A` records of `part_relationships.csv` is the reference part)
+- it is alternate to reference part - which one is the reference part in defined by underlying data table (technical details can be read [here](https://github.com/ojuuji/rbmerge/tree/master/tables), `parent_part_num` from `A` records of `part_relationships.csv` is the reference part)
 
 ## Merge Options
 

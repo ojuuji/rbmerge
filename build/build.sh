@@ -29,7 +29,7 @@ echo ":: building parts ..."
 # now does not refuse to open JS file in viewer.
 
 echo -en '\t\tconst partsData = "' >> "$TARGET"
-sed -r '1d; s/(,[^,]+){2}$//; s/"//g' "${WORKDIR}/../data/parts.csv" | while IFS=, read -r part_num name; do
+sed -r '1d; s/(,[^,]+){2}$//; s/"//g' "${WORKDIR}/../tables/parts.csv" | while IFS=, read -r part_num name; do
 	echo "${part_num},${name}"
 done | gzip -9n | base64 -w0 >> "$TARGET"
 echo '";' >> "$TARGET"
@@ -37,17 +37,17 @@ echo '";' >> "$TARGET"
 echo ":: building part relationships ..."
 
 echo -en '\t\tconst relsData = "' >> "$TARGET"
-tail -n+2 "${WORKDIR}/../data/part_relationships.csv" | gzip -9n | base64 -w0 >> "$TARGET"
+tail -n+2 "${WORKDIR}/../tables/part_relationships.csv" | gzip -9n | base64 -w0 >> "$TARGET"
 echo '";' >> "$TARGET"
 
 echo -en '\t\tconst relsExData = "' >> "$TARGET"
-grep -vPx '#.*|\s*' "${WORKDIR}/../data/part_relationships_ex.csv" | gzip -9n | base64 -w0 >> "$TARGET"
+grep -vPx '#.*|\s*' "${WORKDIR}/../tables/part_relationships_ex.csv" | gzip -9n | base64 -w0 >> "$TARGET"
 echo '";' >> "$TARGET"
 
 echo ":: building colors ..."
 
 echo -en '\t\tconst colorsData = "' >> "$TARGET"
-tail -n+2 "${WORKDIR}/../data/colors.csv" | while IFS=, read -r id name rgb is_trans; do
+tail -n+2 "${WORKDIR}/../tables/colors.csv" | while IFS=, read -r id name rgb is_trans; do
 	echo "${name},${rgb}"
 done | gzip -9n | base64 -w0 >> "$TARGET"
 echo '";' >> "$TARGET"

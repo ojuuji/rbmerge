@@ -4,7 +4,7 @@ on:
   push:
     paths:
       - rbmerge.base.js
-      - 'data/*.csv'
+      - 'tables/*.csv'
 
 jobs:
   build:

@@ -18,10 +18,10 @@ jobs:
           token: ${{ secrets.PAT }}
 
       - name: fetch tables
-        run: ./data/fetch.sh
+        run: ./tables/fetch.sh
 
       - name: commit tables
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          file_pattern: 'data/*.csv'
+          file_pattern: 'tables/*.csv'
           commit_message: "bot: commit updated tables"

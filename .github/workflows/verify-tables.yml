@@ -3,9 +3,9 @@ name: Verify tables
 on:
   push:
     paths:
-      - tables/colors.csv
-      - tables/part_relationships.csv
-      - tables/parts.csv
+      - tables/rbm_colors.csv
+      - tables/rbm_part_relationships.csv
+      - tables/rbm_parts.csv
 
   # Allow to run this workflow manually from the Actions tab
   workflow_dispatch:

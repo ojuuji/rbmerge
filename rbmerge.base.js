@@ -41,9 +41,6 @@ class RBmerge {
 		const rels = (await decompress(relsData)).trim().split('\n');
 		for (const rel of rels) {
 			let [type, child, parent] = rel.split(',')
-			if (type == Rel.Mold) {
-				[child, parent] = [parent, child];  // resolve to newest mold variation
-			}
 			this.rels.set(Key(child, type), parent);
 		}
 

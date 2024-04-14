@@ -189,23 +189,10 @@ class RBmerge {
 		}
 
 		this.merged = [...map.values()];
-		this.merged.sort((l, r) => {
-			let lname = this.names.get(l[0].refPartNum);
-			if (lname === undefined) {
-				lname = l[0].name;
-				console.log(`${this.me}: failed to get name for refPartNum=${l[0].refPartNum}, will use collected name "${lname}" for partNum=${l[0].partNum}`);
-			}
-			let rname = this.names.get(r[0].refPartNum);
-			if (rname === undefined) {
-				rname = r[0].name;
-				console.log(`${this.me}: failed to get name for refPartNum=${r[0].refPartNum}, will use collected name "${rname}" for partNum=${r[0].partNum}`);
-			}
-			return lname.localeCompare(rname);
-		});
-
 		this.mergedCount = 0;
-		for (let i = 0; i < this.merged.length; i++) {
-			this.merged[i].sort((l, r) => {
+
+		for (const group of this.merged) {
+			group.sort((l, r) => {
 				if (l.sortFactor != r.sortFactor) {
 					return l.sortFactor - r.sortFactor;
 				}
@@ -218,13 +205,36 @@ class RBmerge {
 				return 0;
 			});
 
-			this.merged[i].forEach(part => this.mergedCount += part.count);
+			group.forEach(part => this.mergedCount += part.count);
 		}
+
+		this.merged.sort((l, r) => {
+			// Make it smarter a bit so that for example "Brick 1 x 2" comes _before_ "Brick 1 x 16"
+			const lw = l[0].name.split(' ').reverse();
+			const rw = r[0].name.split(' ').reverse();
+			while (lw.length > 0 && rw.length > 0 && lw[lw.length - 1] == rw[rw.length - 1]) {
+				lw.pop();
+				rw.pop();
+			}
+			if (lw.length == 0 || rw.length == 0) {
+				return lw.length != 0 ? 1 : rw.length != 0 ? -1 : 0;
+			}
+			const ln = parseInt(lw[lw.length - 1]);
+			const rn = parseInt(rw[rw.length - 1]);
+			if (!isNaN(ln) && !isNaN(rn)) {
+				return ln - rn;
+			}
+			return lw[lw.length - 1].localeCompare(rw[rw.length - 1]);
+		});
 	}
 
 	filter() {
 		this.filtered = this.merged;
 		this.filteredCount = this.mergedCount;
+	}
+
+	partAnchor(partNum) {
+		return `<a href="https://rebrickable.com/parts/${partNum}/" target="_blank">${partNum}</a>`;
 	}
 
 	renderRow(group) {
@@ -260,16 +270,21 @@ class RBmerge {
 
 		let desc = "";
 		if (countPerPartNum.size == 1) {
-			desc = group[0].name;
+			if (group[0].partNum == group[0].refPartNum) {
+				desc = group[0].name;
+			}
+			else {
+				desc = `[${this.partAnchor(group[0].partNum)}] ${group[0].name}`;
+			}
 		}
-		else for (const [key, value] of countPerPartNum) {
+		else for (const [partNum, value] of countPerPartNum) {
 			if (desc.length > 0) {
 				desc += "<br>";
 			}
-			desc += `${value.count} [${key}] ${value.name}`;
+			desc += `${value.count} [${this.partAnchor(partNum)}] ${value.name}`;
 		}
 
-		return `<tr>\n<td><a href="https://rebrickable.com/parts/${group[0].refPartNum}/">${group[0].refPartNum}</a></td>\n<td>${total}</td>\n<td>\n${colors}\n</td>\n<td>${desc}</td>\n</tr>\n`;
+		return `<tr>\n<td>${this.partAnchor(group[0].refPartNum)}</td>\n<td>${total}</td>\n<td>\n${colors}\n</td>\n<td>${desc}</td>\n</tr>\n`;
 	}
 
 	render() {

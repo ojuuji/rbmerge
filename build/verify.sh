@@ -75,6 +75,8 @@ ME_FULLPATH="$(readlink -f "$BASH_SOURCE")"
 ME="$(basename "$ME_FULLPATH")"
 WORKDIR="$(dirname "$ME_FULLPATH")"
 
+export LC_ALL=C
+
 VerifyColors
 VerifyPrints
 VerifyPatterns

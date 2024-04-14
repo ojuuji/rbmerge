@@ -99,6 +99,8 @@ ME_FULLPATH="$(readlink -f "$BASH_SOURCE")"
 WORKDIR="$(dirname "$ME_FULLPATH")" 
 SQLDIR="${WORKDIR}/../sqlite"
 
+export LC_ALL=C
+
 (cd "$SQLDIR" && make && make indices)
 
 cp -f "${SQLDIR}/tables/colors.csv" "${WORKDIR}/rbm_colors.csv"

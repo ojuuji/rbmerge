@@ -101,10 +101,7 @@ SQLDIR="${WORKDIR}/../sqlite"
 
 export LC_ALL=C
 
-(cd "$SQLDIR" && make && make indices)
-
 cp -f "${SQLDIR}/tables/colors.csv" "${WORKDIR}/rbm_colors.csv"
-cp -f "${SQLDIR}/tables/parts.csv" "${WORKDIR}/rbm_parts.csv"
 
 UpdatePartRelationships
 

@@ -22,18 +22,9 @@ const Key = (partNum, rel) => `${partNum}:${rel}`;
 
 class RBmerge {
 	async init() {
-		const partsData = "";   // <-- CAUTION! These four lines
-		const relsData = "";    // <-- are replaced by the script
-		const relsExData = "";  // <-- with actual base64-encoded
-		const colorsData = "";  // <-- then gzipped tables data
-
-		// <part_num>,<name>\n...
-		const parts = (await decompress(partsData)).trim().split('\n');
-		for (const part of parts) {
-			let commaIdx = part.indexOf(',');
-			let [partNum, name] = [part.slice(0, commaIdx), part.slice(commaIdx + 1)];
-			this.names.set(partNum, name);
-		}
+		const relsData = "";    // <-- CAUTION! These lines are replaced
+		const relsExData = "";  // <-- by the script with actual base64-
+		const colorsData = "";  // <-- encoded then gzipped tables data
 
 		// <rel_type>,<child_part_num>,<parent_part_num>\n...
 		const rels = (await decompress(relsData)).trim().split('\n');
@@ -343,7 +334,6 @@ class RBmerge {
 	}
 
 	me = "RBmerge";
-	names = new Map();
 	colors = new Map();
 	rels = new Map();
 	relsEx = new Map([[Rel.Alt, []], [Rel.Mold, []], [Rel.Print, []], [Rel.Pattern, []]]);

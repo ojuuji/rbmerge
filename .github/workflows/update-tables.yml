@@ -18,8 +18,16 @@ jobs:
           token: ${{ secrets.PAT }}
           submodules: true
 
+      - name: build database
+        working-directory: ./sqlite
+        run: make && make indices
+
       - name: update tables
         run: ./tables/update.sh
+
+      - name: check integrity
+        continue-on-error: true
+        run: ./tables/integrity_check.sh
 
       - name: commit tables
         uses: stefanzweifel/git-auto-commit-action@v5

@@ -62,11 +62,8 @@ class RBmerge {
 
 	setup() {
 		if (this.parse()) {
-			this.init().then(() => {
-				this.apply();
-				this.filter();
-				this.render();
-			});
+			this.resetTable();
+			this.init().then(() => this.apply());
 		}
 	}
 
@@ -226,11 +223,40 @@ class RBmerge {
 			}
 			return lw[lw.length - 1].localeCompare(rw[rw.length - 1]);
 		});
+
+		this.filter();
 	}
 
 	filter() {
-		this.filtered = this.merged;
-		this.filteredCount = this.mergedCount;
+		const filter = document.getElementById("search_edit").value.toLowerCase().match(/\S+/g);
+		if (filter === null) {
+			this.filtered = this.merged;
+			this.filteredCount = this.mergedCount;
+		}
+		else {
+			this.filtered = [];
+			this.filteredCount = 0;
+
+			for (const group of this.merged) {
+				let groupFilter = [...filter];
+				grouploop: for (const part of group) {
+					for (let i = groupFilter.length - 1; i >= 0; i --) {
+						if (part.name.toLowerCase().includes(groupFilter[i])) {
+							groupFilter.splice(i, 1);
+							if (groupFilter.length == 0) {
+								break grouploop;
+							}
+						}
+					}
+				}
+				if (groupFilter.length == 0) {
+					this.filtered.push(group);
+					group.forEach(part => this.filteredCount += part.count);
+				}
+			}
+		}
+
+		this.render();
 	}
 
 	partAnchor(partNum) {
@@ -287,14 +313,26 @@ class RBmerge {
 		return `<tr>\n<td>${this.partAnchor(group[0].refPartNum)}</td>\n<td>${total}</td>\n<td>\n${colors}\n</td>\n<td>${desc}</td>\n</tr>\n`;
 	}
 
-	render() {
+	resetTable() {
 		document.getElementsByTagName('thead')[0].innerHTML = `
 <tr>
-<th>Ref Part Num (${this.merged.length})</th>
-<th>Quantity (${this.mergedCount})</th>
+<th colspan="2"></th>
+<th colspan="2"><input style="width:100%" type="text" placeholder="Search" id="search_edit"/></div></th>
+</th>
+</tr>
+<tr id="parts_header">
+</tr>
+`;
+		document.getElementById("search_edit").addEventListener('input', () => this.filter());
+	}
+
+	render() {
+		const hasFilter = this.mergedCount !== this.filteredCount;
+		document.getElementById('parts_header').innerHTML = `
+<th>Ref Part Num (${hasFilter ? `${this.filtered.length} of ` : ''}${this.merged.length})</th>
+<th>Quantity (${hasFilter ? `${this.filteredCount} of ` : ''}${this.mergedCount})</th>
 <th>Colors</th>
 <th>Description</th>
-</tr>
 `;
 
 		let rows = "";

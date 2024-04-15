@@ -13,10 +13,8 @@ const decompress = base64string => {
 
 const Rel = Object.freeze({
 	Alt      : 'A',
-	SubPart  : 'B',
 	Mold     : 'M',
 	Print    : 'P',
-	Pair     : 'R',
 	Pattern  : 'T',
 });
 
@@ -348,7 +346,7 @@ class RBmerge {
 	names = new Map();
 	colors = new Map();
 	rels = new Map();
-	relsEx = new Map([[Rel.Alt, []], [Rel.SubPart, []], [Rel.Mold, []], [Rel.Print, []], [Rel.Pair, []], [Rel.Pattern, []]]);
+	relsEx = new Map([[Rel.Alt, []], [Rel.Mold, []], [Rel.Print, []], [Rel.Pattern, []]]);
 	inventory = [];
 	merged = [];
 	mergedCount = 0;

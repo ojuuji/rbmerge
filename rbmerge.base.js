@@ -303,6 +303,8 @@ class RBmerge {
 	}
 
 	resetTable() {
+		document.getElementsByTagName('body')[0].innerHTML = document.getElementsByTagName('table')[0].outerHTML;
+		document.getElementsByTagName('tbody')[0].innerHTML = "Loading ...";
 		document.getElementsByTagName('thead')[0].innerHTML = `
 <tr>
 <th colspan="2"></th>

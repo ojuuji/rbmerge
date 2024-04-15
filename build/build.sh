@@ -39,7 +39,7 @@ echo '";' >> "$TARGET"
 echo ":: building colors ..."
 
 echo -en '\t\tconst colorsData = "' >> "$TARGET"
-grep -Po '^[^,]+,\K.+(?=,[^,]+$)' "${WORKDIR}/../tables/rbm_colors.csv" | gzip -9n | base64 -w0 >> "$TARGET"
+gzip -c9n "${WORKDIR}/../tables/rbm_colors.csv" | base64 -w0 >> "$TARGET"
 echo '";' >> "$TARGET"
 
 tail -n+$((LAST_LINE+1)) "$SOURCE" >> "$TARGET"

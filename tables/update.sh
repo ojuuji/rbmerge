@@ -101,8 +101,6 @@ SQLDIR="${WORKDIR}/../sqlite"
 
 export LC_ALL=C
 
-cp -f "${SQLDIR}/tables/colors.csv" "${WORKDIR}/rbm_colors.csv"
-
 UpdatePartRelationships
 
 echo ":: done"

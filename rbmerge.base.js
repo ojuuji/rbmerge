@@ -40,13 +40,8 @@ class RBmerge {
 			this.relsEx.get(type).push({regex: new RegExp(`^${child}$`), partNum: parent});
 		}
 
-		// <name>,<rgb>\n...
-		const colors = (await decompress(colorsData)).trim().split('\n');
-		for (const color of colors) {
-			let commaIdx = color.indexOf(',');
-			let [name, hex] = [color.slice(0, commaIdx), color.slice(commaIdx + 1)];
-			this.colors.set(name, hex);
-		}
+		// already sorted colors in form <name>\n...
+		this.colors = (await decompress(colorsData)).trim().split('\n');
 	}
 
 	setup() {
@@ -112,50 +107,15 @@ class RBmerge {
 		}
 	}
 
-	hex2rgb(hex) {
-		let r = parseInt(hex.slice(0, 2), 16);
-		let g = parseInt(hex.slice(2, 4), 16);
-		let b = parseInt(hex.slice(4, 6), 16);
-
-		return [r, g, b]
-	}
-
-	rgb2hsv(r, g, b) {
-		(r /= 255), (g /= 255), (b /= 255);
-		let v = Math.max(r, g, b), c = v - Math.min(r, g, b);
-		let h = c && ((v == r) ? (g - b) / c : ((v == g) ? 2 + (b - r) / c : 4 + (r - g) / c)); 
-
-		return [60 * (h < 0 ? h + 6 : h), v && c / v, v];
-	}
-
 	compareColors(l, r) {
-		let hardcoded = ["[Unknown]", "[No Color/Any Color]", "White", "Black"];
-		let lIdx = hardcoded.findIndex(e => e == l);
-		let rIdx = hardcoded.findIndex(e => e == r);
-		if (lIdx != -1 || rIdx != -1) {
-			return lIdx != -1 && rIdx != -1 ? lIdx - rIdx : lIdx != -1 ? -1 : 1;
+		if (l !== r) {
+			for (const color of this.colors) {
+				if (color === l || color === r) {
+					return color === l ? -1 : 1;
+				}
+			}
 		}
-
-		let lhex = this.colors.get(l);
-		let rhex = this.colors.get(r);
-		if (lhex === undefined || rhex === undefined) {
-			return lhex === undefined && rhex === undefined ? 0 : lhex === undefined ? -1 : 1;
-		}
-
-		let [lr, lg, lb] = this.hex2rgb(lhex);
-		let [rr, rg, rb] = this.hex2rgb(rhex);
-		let ldiff = Math.max(Math.abs(lr - lg), Math.abs(lr - lb), Math.abs(lg - lb));
-		let rdiff = Math.max(Math.abs(rr - rg), Math.abs(rr - rb), Math.abs(rg - rb));
-
-		const grayThreshold = 18;
-		if (ldiff <= grayThreshold || rdiff <= grayThreshold) {
-			return ldiff <= grayThreshold && rdiff <= grayThreshold ? lr - rr : ldiff <= grayThreshold ? -1 : 1;
-		}
-
-		let [lh, ls, lv] = this.rgb2hsv(lr, lg, lb);
-		let [rh, rs, rv] = this.rgb2hsv(rr, rg, rb);
-
-		return lh != rh ? lh - rh : ls != rs ? ls - rs : lv - rv;
+		return 0;
 	}
 
 	apply() {
@@ -178,19 +138,7 @@ class RBmerge {
 		this.mergedCount = 0;
 
 		for (const group of this.merged) {
-			group.sort((l, r) => {
-				if (l.sortFactor != r.sortFactor) {
-					return l.sortFactor - r.sortFactor;
-				}
-				if (l.partNum != r.partNum) {
-					return l.partNum.localeCompare(r.partNum);
-				}
-				if (l.color != r.color) {
-					return this.compareColors(l.color, r.color);
-				}
-				return 0;
-			});
-
+			group.sort((l, r) => l.sortFactor - r.sortFactor || l.partNum.localeCompare(r.partNum) || this.compareColors(l.color, r.color));
 			group.forEach(part => this.mergedCount += part.count);
 		}
 

@@ -18,16 +18,24 @@ jobs:
           token: ${{ secrets.PAT }}
           submodules: true
 
+      - name: setup python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.8'
+
       - name: build database
         working-directory: ./sqlite
         run: make && make indices
 
-      - name: update tables
-        run: ./tables/update.sh
-
       - name: check integrity
         continue-on-error: true
         run: ./tables/integrity_check.sh
+
+      - name: update relationships table
+        run: ./tables/update.sh
+
+      - name: update colors table
+        run: python ./tables/update.py
 
       - name: commit tables
         uses: stefanzweifel/git-auto-commit-action@v5

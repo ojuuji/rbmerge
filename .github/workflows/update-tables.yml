@@ -31,10 +31,7 @@ jobs:
         continue-on-error: true
         run: ./tables/integrity_check.sh
 
-      - name: update relationships table
-        run: ./tables/update.sh
-
-      - name: update colors table
+      - name: update tables
         run: python ./tables/update.py
 
       - name: commit tables

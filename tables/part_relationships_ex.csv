@@ -1,11 +1,11 @@
 # Format:
 # rel_type,child_part_num_regex,parent_part_num_repl
 
-# General rule for prints, degradation covered by verify.sh:VerifyPrints
+# General rule for prints, degradation covered by integrity_check.sh
 P,(.+)pr\d+[a-z]*,$1
-# General rule for prints, degradation covered by verify.sh:VerifyPatterns
+# General rule for prints, degradation covered by integrity_check.sh
 T,(.+)pats?\d+(c01)?,$1
-# General rules for minifigs, degradation covered by verify.sh:VerifyMinifigs
+# General rules for minifigs, degradation covered by integrity_check.sh
 T,973[c-h].+,973c00
 A,973b.+,973c00
 T,970[cdl].+,970c00
@@ -22,8 +22,6 @@ A,73230,3005
 A,6541,3005
 
 # To Brick 1 x 2:
-# - Brick 1 x 2 without Bottom Tube
-A,3065,3004
 # - Technic Brick 1 x 2 [2 Pin Holes]
 A,32000,3004
 # - Technic Brick 1 x 2 with Axle Hole

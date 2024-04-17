@@ -1,4 +1,5 @@
 from contextlib import closing
+from functools import cmp_to_key
 import colorsys
 import csv
 import os
@@ -51,10 +52,10 @@ def update_colors():
             print(color.name, file=f)
 
 
-SQL_YEARS = """
-  with part_years as (
+SQL_STATS = """
+  with part_stats as (
            /* parts from sets */
-    select sets.year year, ip.part_num part_num
+    select sets.set_num set_num, sets.year year, ip.part_num part_num
       from sets
       join inventories i
         on i.set_num = sets.set_num
@@ -62,7 +63,7 @@ SQL_YEARS = """
         on ip.inventory_id = i.id
      union
            /* parts from minifigs included in the sets */
-    select sets.year year, ip_fig.part_num part_num
+    select i_fig.set_num set_num, sets.year year, ip_fig.part_num part_num
       from sets
       join inventories i
         on i.set_num = sets.set_num
@@ -73,27 +74,35 @@ SQL_YEARS = """
       join inventory_parts ip_fig
         on ip_fig.inventory_id = i_fig.id
 )
-select part_num, min(year), max(year)
-  from part_years
+select part_num, count(set_num), min(year), max(year)
+  from part_stats
  group by part_num
 """
-SQL_MOLDS = """
+
+SQL_RELS_EXPAND = """
 select child_part_num c, parent_part_num p
   from part_relationships
- where rel_type = 'M'
-   and (c in ({0}) or p in ({0}))
+ where rel_type = '{0}'
+   and (c in ({1}) or p in ({1}))
+"""
+
+SQL_RELS_LIST = """
+select *
+  from part_relationships
+ where rel_type in ('A', 'M', 'P', 'T')
 """
 
 
-def find_all_molds(con, molds):
+def find_all_rels(rel_type, con, rels):
     with closing(con.cursor()) as cur:
-        old_molds = set()
-        while len(old_molds) != len(molds):
-            old_molds = molds
-            molds = set()
-            for a, b in cur.execute(SQL_MOLDS.format(','.join(f"'{m}'" for m in old_molds))):
-                molds.update([a, b])
-        return molds
+        old_rels = set()
+        while len(old_rels) != len(rels):
+            old_rels = rels
+            rels = set()
+            sql = SQL_RELS_EXPAND.format(rel_type, ','.join(f"'{m}'" for m in old_rels))
+            for a, b in cur.execute(sql):
+                rels.update([a, b])
+        return rels
 
 
 def try_to_int(value):
@@ -107,28 +116,29 @@ def split_part_num(part_num):
     return tuple(try_to_int(x) for x in re.split(r'(\d+)', part_num))
 
 
-def resolve_molds(molds, years):
-    ref = ""
-    max_year = 0
+def cmp_parts(a, b, stats, rel_type):
+    has_stats_a = a in stats
+    has_stats_b = b in stats
+    if has_stats_a != has_stats_b:
+        return -1 if has_stats_a else 1
 
-    for mold in molds:
-        if mold in years:
-            if max_year < years[mold][1]:
-                ref = mold
-                max_year = years[mold][1]
-            elif max_year == years[mold][1]:
-                if years[ref][0] != years[mold][0]:
-                    if years[ref][0] < years[mold][0]:
-                        ref = mold
-                # if both molds have the same year range take the smallest part num
-                elif split_part_num(mold) < split_part_num(ref):
-                    ref = mold
-        # if both molds are unused take the largest part num
-        elif 0 == max_year and split_part_num(mold) > split_part_num(ref):
-            ref = mold
+    if has_stats_a:
+        num_sets_a, min_year_a, max_year_a = stats[a]
+        num_sets_b, min_year_b, max_year_b = stats[b]
 
-    molds.remove(ref)
-    return ref, molds
+        if max_year_a != max_year_b:
+            return max_year_b - max_year_a
+
+        if 'M' == rel_type and min_year_a != min_year_b:
+            return min_year_b - min_year_a
+
+        if num_sets_a != num_sets_b:
+            return num_sets_b - num_sets_a
+
+    sa = split_part_num(a)
+    sb = split_part_num(b)
+
+    return -1 if sa < sb else 1 if sa > sb else 0
 
 
 def update_rels():
@@ -136,22 +146,22 @@ def update_rels():
         with mem, closing(mem.cursor()) as cur:
             cur.execute("create table rels (type char, child text, parent text)")
 
-        years = {}
+        stats = {}
         with closing(con.cursor()) as cur:
-            for part_num, min_year, max_year in cur.execute(SQL_YEARS):
-                years[part_num] = [min_year, max_year]
+            for part_num, num_sets, min_year, max_year in cur.execute(SQL_STATS):
+                stats[part_num] = [num_sets, min_year, max_year]
 
-        resolved = set()
+        resolved = {'A': set(), 'M': set()}
         with mem, closing(con.cursor()) as cur:
-            for rel_type, child, parent in cur.execute("select * from part_relationships where rel_type in ('A', 'M', 'P', 'T')"):
-                if 'M' != rel_type:
+            for rel_type, child, parent in cur.execute(SQL_RELS_LIST):
+                if rel_type not in resolved:
                     mem.execute('insert into rels values (?, ?, ?)', (rel_type, child, parent))
-                elif child not in resolved:
-                    molds = find_all_molds(con, {child, parent})
-                    ref, molds = resolve_molds(molds, years)
-                    resolved.update([ref], molds)
-                    for mold in molds:
-                        mem.execute('insert into rels values (?, ?, ?)', ('M', mold, ref))
+                elif child not in resolved[rel_type]:
+                    rels = find_all_rels(rel_type, con, {child, parent})
+                    resolved[rel_type].update(rels)
+                    rels = sorted(list(rels), key=cmp_to_key(lambda a, b: cmp_parts(a, b, stats, rel_type)))
+                    for rel in rels[1:]:
+                        mem.execute('insert into rels values (?, ?, ?)', (rel_type, rel, rels[0]))
 
         with open(f'{WORKDIR}/rbm_part_relationships.csv', 'w') as f, closing(mem.cursor()) as cur:
             for row in cur.execute("select * from rels order by 1, 2, 3"):

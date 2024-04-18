@@ -5,7 +5,7 @@
   - [Merge Options](#merge-options)
   - [Filter Options](#filter-options)
 
-One of many great opportunities, provided by Rebrickable, is possibility to compose a list of all your parts, so you can check how many particular parts you have, in which colors, etc.
+One of many great features, provided by Rebrickable, is possibility to compose a list of all your parts, so you can check how many particular parts you have, in which colors, etc.
 
 Rebrickable even provides possibility to export all parts as a single plain table, which then can be used offline. In some cases this may be more convenient or faster than using the site.
 
@@ -17,13 +17,13 @@ Suppose you are prototyping something and you want to know how many Technic conn
 
 But you just want to know how many such connectors you have, regardless of their color or molds, which you may not even know they exist.
 
-This is where RBmerge may be handy. Given a table with all your parts as an input, it transforms table by merging all same parts with different colors together. Then, basing on your preference, it also merges molds, patters, prints, alternate parts.
+This is where RBmerge may be handy. Given a table with all your parts as an input, it transforms table by merging together all the same parts, which have just different colors. Then, basing on your preference, it also merges molds, patters, prints, alternate parts.
 
 This is how the row for part 42195, mentioned above, may look after transforming table by RBmerge:
 
 ![Example of merged part 42195](img/example_42195_merged.png)
 
-Now all part variants are listed together while still retaining some stats about variations, for example, how many colors are there, or how many molds and parts per mold. Detailed description of the table structure can be found in the [Table Structure](#table-structure) topic.
+Now all part variants are listed together while still retaining some stats about variations. For example, you still can check how many colors are there, or how many molds and parts per mold. Detailed description of the table structure can be found in the [Table Structure](#table-structure) topic.
 
 To resolve mold variants, prints, patters, and alternate parts RBmerge uses parts relationships from [Rebrickable Downloads](https://rebrickable.com/downloads/).
 
@@ -37,7 +37,7 @@ Log in to Rebrickable. Go to `My LEGO` → `All My Parts` → `Export Parts` →
 
 This will load a table with all your parts.
 
-Save it to a file, and when saving select "HTML Only" (available in all major browsers). Now open saved HTML file in a text editor and add this line before closing `</body>` tag (for the info, `'+'` (plus) sign at the beginning of the line is used for highlighting and should not be added to the file):
+Save it to a file, and, when saving, select "HTML Only" (available in all major browsers). Now open saved HTML file in a text editor and add this line before closing `</body>` tag (for the info, `'+'` (plus) sign at the beginning of the line is used for highlighting and should not be added to the file):
 
 ```diff
  <script type="text/javascript" src="https://rebrickable.com/static/plugins/jquery/jquery-3.5.1.min.js"></script>
@@ -74,14 +74,32 @@ This way it becomes truly local and never performs any Internet requests.
 
 # Usage
 
-## Table Structure
-
 When processing parts list, script resolves every part to so-called _reference_ part. All parts, which have the same reference part, are merged together.
 
 Part is resolved to the reference part if it meets any of these criteria:
 - it has different color but the same part number as the reference part
-- it is pattern, print, or an older mold variant of the reference part
-- it is alternate to reference part - which one is the reference part in defined by underlying data table (technical details can be read [here](https://github.com/ojuuji/rbmerge/tree/master/tables), `parent_part_num` from `A` records of `part_relationships.csv` is the reference part)
+- (optionally) it is print, pattern, mold, or alternative of the reference part
+
+Which one becomes the reference part in case of molds and alternatives is decided basing on the parts usage in the sets and the years when it was used. Basically it will be either a part with the most recent year or, if there are multiple parts with the same year, the one that is referenced in more sets.
+
+## Table Structure
+
+Table consists of four columns:
+
+```
+| Ref Part Num (`<N>`) | Quantity (`<M>`) | Colors | Description |
+```
+
+|Ref Part Num (`<N>`)|Quantity (`<M>`)|Colors|Description|
+|---|---|---|---|
+
+where `<N>` is total number of reference parts (total number of rows) in the table, and `<M>` is total number of parts at all. `<M>` actually equals to the number of parts on Rebrickable page `All My Parts`, for example:
+
+|![Example of the table header](img/table_header.png)|![Parts count on Rebrickable](img/parts_count_on_rb.png)|
+|---|---|
+|Example of the table header|Parts count on Rebrickable|
+
+Each row contains single and unique reference part number in `Ref Part Num` column. They are unique because colors are always merged regardless of the merge options, which are described below.
 
 ## Merge Options
 

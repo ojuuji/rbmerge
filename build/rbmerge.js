@@ -65,7 +65,16 @@ class RBmerge {
 		const re = /<td>\s*(?<img><img.+?>)\s*<\/td>\s*<td>(?<partNum>[^<]+)<\/td>\s*<td>(?<count>\d+)<\/td>\s*<td>(?<color>[^<]+)<\/td>\s*<td>(?<name>[^<]+)<\/td>/g
 		for (let match; (match = re.exec(table)) !== null; ) {
 			const {groups: {img, partNum, count, color, name}} = match;
-			const part = {img: img, partNum: partNum, refPartNum: partNum, count: Number(count), color: color, name: name, sortFactor: 0};
+			const part = {
+				img: img,
+				partNum: partNum,
+				refPartNum: partNum,
+				count: Number(count),
+				color: color,
+				name: name,
+				nameLowerCase: name.toLowerCase(),
+				sortFactor: 0,
+			};
 			this.inventory.push(part);
 		}
 
@@ -144,8 +153,8 @@ class RBmerge {
 
 		this.merged.sort((l, r) => {
 			// Make it smarter a bit so that for example "Brick 1 x 2" comes _before_ "Brick 1 x 16"
-			const lw = l[0].name.split(' ').reverse();
-			const rw = r[0].name.split(' ').reverse();
+			const lw = l[0].nameLowerCase.split(' ').reverse();
+			const rw = r[0].nameLowerCase.split(' ').reverse();
 			while (lw.length > 0 && rw.length > 0 && lw[lw.length - 1] == rw[rw.length - 1]) {
 				lw.pop();
 				rw.pop();
@@ -165,8 +174,13 @@ class RBmerge {
 	}
 
 	filter() {
-		const filter = document.getElementById("search_edit").value.toLowerCase().match(/\S+/g);
-		if (filter === null) {
+		const filter = new Set(document.getElementById("filter_edit").value.toLowerCase().match(/\S+/g));
+		if (this.lastFilter !== undefined && filter.size === this.lastFilter.size && [...filter].every(x => this.lastFilter.has(x))) {
+			return;
+		}
+		this.lastFilter = filter;
+
+		if (filter.size === 0) {
 			this.filtered = this.merged;
 			this.filteredCount = this.mergedCount;
 		}
@@ -178,7 +192,7 @@ class RBmerge {
 				let groupFilter = [...filter];
 				grouploop: for (const part of group) {
 					for (let i = groupFilter.length - 1; i >= 0; i --) {
-						if (part.name.toLowerCase().includes(groupFilter[i])) {
+						if (part.nameLowerCase.includes(groupFilter[i])) {
 							groupFilter.splice(i, 1);
 							if (groupFilter.length == 0) {
 								break grouploop;
@@ -255,14 +269,13 @@ class RBmerge {
 		document.getElementsByTagName('tbody')[0].innerHTML = "Loading ...";
 		document.getElementsByTagName('thead')[0].innerHTML = `
 <tr>
-<th colspan="2"></th>
-<th colspan="2"><input style="width:100%" type="text" placeholder="Search" id="search_edit"/></div></th>
+<th colspan="4"><input style="width:100%" type="text" placeholder="Filter" id="filter_edit"/></div></th>
 </th>
 </tr>
 <tr id="parts_header">
 </tr>
 `;
-		document.getElementById("search_edit").addEventListener('input', () => this.filter());
+		document.getElementById("filter_edit").addEventListener('input', () => this.filter());
 	}
 
 	render() {

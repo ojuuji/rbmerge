@@ -83,23 +83,31 @@ class RBmerge {
 
 	resolve(part) {
 		let found = new Set();
-		let links = [[Rel.Print, 1000], [Rel.Pattern, 100], [Rel.Alt, 10], [Rel.Mold, 1]];
+		let links = [
+			[Rel.Print, 1000, document.getElementById('rbm_prints').checked],
+			[Rel.Pattern, 100, document.getElementById('rbm_patterns').checked],
+			[Rel.Alt, 10, document.getElementById('rbm_alts').checked],
+			[Rel.Mold, 1, document.getElementById('rbm_molds').checked],
+		];
+		let resolveExtra = document.getElementById('rbm_extra').checked;
 		while (true) {
-			let resolved, resolvedSortFactor
-			for (const [rel, sortFactor] of links) {
-				resolved = this.rels.get(Key(part.refPartNum, rel));
-				if (resolved === undefined) {
-					for (const {regex, partNum} of this.relsEx.get(rel)) {
-						let replaced = part.refPartNum.replace(regex, partNum);
-						if (replaced != part.refPartNum) {
-							resolved = replaced;
-							break;
+			let resolved, resolvedSortFactor;
+			for (const [rel, sortFactor, shouldResolve] of links) {
+				if (shouldResolve) {
+					resolved = this.rels.get(Key(part.refPartNum, rel));
+					if (resolved === undefined && resolveExtra) {
+						for (const {regex, partNum} of this.relsEx.get(rel)) {
+							let replaced = part.refPartNum.replace(regex, partNum);
+							if (replaced != part.refPartNum) {
+								resolved = replaced;
+								break;
+							}
 						}
 					}
-				}
-				if (resolved !== undefined) {
-					resolvedSortFactor = sortFactor;
-					break;
+					if (resolved !== undefined) {
+						resolvedSortFactor = sortFactor;
+						break;
+					}
 				}
 			}
 			
@@ -131,7 +139,7 @@ class RBmerge {
 		let map = new Map();
 
 		for (const part of this.inventory) {
-			let resolved = this.resolve(part);
+			let resolved = this.resolve(structuredClone(part));
 
 			let list = map.get(resolved.refPartNum);
 			if (list === undefined) {
@@ -170,12 +178,12 @@ class RBmerge {
 			return lw[lw.length - 1].localeCompare(rw[rw.length - 1]);
 		});
 
-		this.filter();
+		this.filter(true);
 	}
 
-	filter() {
-		const filter = new Set(document.getElementById("filter_edit").value.toLowerCase().match(/\S+/g));
-		if (this.lastFilter !== undefined && filter.size === this.lastFilter.size && [...filter].every(x => this.lastFilter.has(x))) {
+	filter(force = false) {
+		const filter = new Set(document.getElementById("rbm_filter").value.toLowerCase().match(/\S+/g));
+		if (!force && this.lastFilter !== undefined && filter.size === this.lastFilter.size && [...filter].every(x => this.lastFilter.has(x))) {
 			return;
 		}
 		this.lastFilter = filter;
@@ -265,22 +273,31 @@ class RBmerge {
 	}
 
 	resetTable() {
-		document.getElementsByTagName('body')[0].innerHTML = document.getElementsByTagName('table')[0].outerHTML;
+		document.getElementsByTagName('body')[0].innerHTML = '<div id="rbm_options"></div>' + document.getElementsByTagName('table')[0].outerHTML;
 		document.getElementsByTagName('tbody')[0].innerHTML = "Loading ...";
-		document.getElementsByTagName('thead')[0].innerHTML = `
-<tr>
-<th colspan="4"><input style="width:100%" type="text" placeholder="Filter" id="filter_edit"/></div></th>
-</th>
-</tr>
-<tr id="parts_header">
-</tr>
-`;
-		document.getElementById("filter_edit").addEventListener('input', () => this.filter());
+
+		document.getElementById('rbm_options').innerHTML = `
+<div style="padding: 9px">
+<label style="display: inline">Merge: </label>
+<label style="display: inline" for="rbm_prints"><input type="checkbox" id="rbm_prints" name="rbm_prints" checked/> prints</label>
+<label style="display: inline" for="rbm_patterns"><input type="checkbox" id="rbm_patterns" name="rbm_patterns" checked/> patterns</label>
+<label style="display: inline" for="rbm_molds"><input type="checkbox" id="rbm_molds" name="rbm_molds" checked/> molds</label>
+<label style="display: inline" for="rbm_alts"><input type="checkbox" id="rbm_alts" name="rbm_alts" checked/> alternates</label>
+<label style="display: inline" for="rbm_extra"><input type="checkbox" id="rbm_extra" name="rbm_extra" checked/> extra</label>
+<input style="width:100%" type="text" placeholder="Filter" id="rbm_filter"/></div>
+</div>
+`
+		for (const id of ["rbm_prints", "rbm_patterns", "rbm_molds", "rbm_alts", "rbm_extra"]) {
+			document.getElementById(id).addEventListener('change', () => this.apply());
+		}
+		document.getElementById("rbm_filter").addEventListener('input', () => this.filter());
+
+		this.render();
 	}
 
 	render() {
 		const hasFilter = this.mergedCount !== this.filteredCount;
-		document.getElementById('parts_header').innerHTML = `
+		document.getElementsByTagName('thead')[0].innerHTML = `
 <th>Ref Part Num (${hasFilter ? `${this.filtered.length} of ` : ''}${this.merged.length})</th>
 <th>Quantity (${hasFilter ? `${this.filteredCount} of ` : ''}${this.mergedCount})</th>
 <th>Colors</th>

@@ -87,11 +87,8 @@ Which one becomes the reference part in case of molds and alternatives is decide
 Table consists of four columns:
 
 ```
-| Ref Part Num (`<N>`) | Quantity (`<M>`) | Colors | Description |
+| Ref Part Num (<N>) | Quantity (<M>) | Colors | Description |
 ```
-
-|Ref Part Num (`<N>`)|Quantity (`<M>`)|Colors|Description|
-|---|---|---|---|
 
 where `<N>` is total number of reference parts (total number of rows) in the table, and `<M>` is total number of parts at all. `<M>` actually equals to the number of parts on Rebrickable page `All My Parts`, for example:
 

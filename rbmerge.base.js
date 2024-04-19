@@ -305,9 +305,9 @@ class RBmerge {
 	resetTable() {
 		document.getElementsByTagName('body')[0].innerHTML = '<div id="rbm_options"></div>' + document.getElementsByTagName('table')[0].outerHTML;
 		document.getElementsByTagName('thead')[0].innerHTML = `
-<th>Ref Part Num (<span id="rbm_num_ref_parts">0</span>)</th>
-<th>Quantity (<span id="rbm_num_all_parts">0</span>)</th>
-<th><input style="width:100%" type="text" placeholder="Colors" id="rbm_filter_color"/></th>
+<th style="width: 7em; white-space: nowrap">@:<span id="rbm_num_ref_parts">0</span></th>
+<th style="width: 7em; white-space: nowrap">#:<span id="rbm_num_all_parts">0</span></th>
+<th style="width: 18em"><input style="width:100%" type="text" placeholder="Colors" id="rbm_filter_color"/></th>
 <th><input style="width:100%" type="text" placeholder="Description" id="rbm_filter_name"/></th>
 `;
 		document.getElementsByTagName('tbody')[0].innerHTML = "Loading ...";
@@ -332,8 +332,8 @@ class RBmerge {
 
 	render() {
 		const hasFilter = this.mergedCount !== this.filteredCount;
-		document.getElementById("rbm_num_ref_parts").innerHTML = `${hasFilter ? `${this.filtered.length} of ` : ''}${this.merged.length}`;
-		document.getElementById("rbm_num_all_parts").innerHTML = `${hasFilter ? `${this.filteredCount} of ` : ''}${this.mergedCount}`;
+		document.getElementById("rbm_num_ref_parts").innerHTML = `${hasFilter ? `${this.filtered.length}/` : ''}${this.merged.length}`;
+		document.getElementById("rbm_num_all_parts").innerHTML = `${hasFilter ? `${this.filteredCount}/` : ''}${this.mergedCount}`;
 
 		let rows = "";
 		for (let i = 0; i < this.filtered.length; i++) {

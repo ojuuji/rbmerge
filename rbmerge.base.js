@@ -143,12 +143,11 @@ class RBmerge {
 
 			let list = map.get(resolved.refPartNum);
 			if (list === undefined) {
-				list = [resolved];
+				map.set(resolved.refPartNum, [resolved]);
 			}
 			else {
 				list.push(resolved);
 			}
-			map.set(resolved.refPartNum, list);
 		}
 
 		this.merged = [...map.values()];
@@ -196,21 +195,41 @@ class RBmerge {
 			this.filtered = [];
 			this.filteredCount = 0;
 
-			for (const group of this.merged) {
-				let groupFilter = [...filter];
-				grouploop: for (const part of group) {
-					for (let i = groupFilter.length - 1; i >= 0; i --) {
-						if (part.nameLowerCase.includes(groupFilter[i])) {
-							groupFilter.splice(i, 1);
-							if (groupFilter.length == 0) {
-								break grouploop;
+			if (this.filterGroups) {
+				for (const group of this.merged) {
+					let groupFilter = [...filter];
+					grouploop: for (const part of group) {
+						for (let i = groupFilter.length - 1; i >= 0; i --) {
+							if (part.nameLowerCase.includes(groupFilter[i])) {
+								groupFilter.splice(i, 1);
+								if (groupFilter.length == 0) {
+									break grouploop;
+								}
 							}
 						}
 					}
+					if (groupFilter.length == 0) {
+						this.filtered.push(group);
+						group.forEach(part => this.filteredCount += part.count);
+					}
 				}
-				if (groupFilter.length == 0) {
-					this.filtered.push(group);
-					group.forEach(part => this.filteredCount += part.count);
+			}
+			else {
+				for (const group of this.merged) {
+					let filteredGroup = [];
+					for (const part of group) {
+						let matches = true;
+						for (const word of filter) {
+							matches = matches && part.nameLowerCase.includes(word);
+						}
+						if (matches) {
+							filteredGroup.push(part);
+							this.filteredCount += part.count
+						}
+					}
+					if (filteredGroup.length !== 0) {
+						this.filtered.push(filteredGroup);
+					}
 				}
 			}
 		}
@@ -322,6 +341,7 @@ class RBmerge {
 	mergedCount = 0;
 	filtered = [];
 	filteredCount = 0;
+	filterGroups = false;
 };
 
 return new RBmerge();

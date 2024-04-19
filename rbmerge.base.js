@@ -293,6 +293,12 @@ class RBmerge {
 
 	resetTable() {
 		document.getElementsByTagName('body')[0].innerHTML = '<div id="rbm_options"></div>' + document.getElementsByTagName('table')[0].outerHTML;
+		document.getElementsByTagName('thead')[0].innerHTML = `
+<th>Ref Part Num (<span id="rbm_num_ref_parts">0</span>)</th>
+<th>Quantity (<span id="rbm_num_all_parts">0</span>)</th>
+<th>Colors</th>
+<th><input style="width:100%" type="text" placeholder="Description" id="rbm_filter"/></th>
+`;
 		document.getElementsByTagName('tbody')[0].innerHTML = "Loading ...";
 
 		document.getElementById('rbm_options').innerHTML = `
@@ -303,25 +309,19 @@ class RBmerge {
 <label style="display: inline" for="rbm_molds"><input type="checkbox" id="rbm_molds" name="rbm_molds" checked/> molds</label>
 <label style="display: inline" for="rbm_alts"><input type="checkbox" id="rbm_alts" name="rbm_alts" checked/> alternates</label>
 <label style="display: inline" for="rbm_extra"><input type="checkbox" id="rbm_extra" name="rbm_extra" checked/> extra</label>
-<input style="width:100%" type="text" placeholder="Filter" id="rbm_filter"/></div>
+</div>
 </div>
 `
 		for (const id of ["rbm_prints", "rbm_patterns", "rbm_molds", "rbm_alts", "rbm_extra"]) {
 			document.getElementById(id).addEventListener('change', () => this.apply());
 		}
 		document.getElementById("rbm_filter").addEventListener('input', () => this.filter());
-
-		this.render();
 	}
 
 	render() {
 		const hasFilter = this.mergedCount !== this.filteredCount;
-		document.getElementsByTagName('thead')[0].innerHTML = `
-<th>Ref Part Num (${hasFilter ? `${this.filtered.length} of ` : ''}${this.merged.length})</th>
-<th>Quantity (${hasFilter ? `${this.filteredCount} of ` : ''}${this.mergedCount})</th>
-<th>Colors</th>
-<th>Description</th>
-`;
+		document.getElementById("rbm_num_ref_parts").innerHTML = `${hasFilter ? `${this.filtered.length} of ` : ''}${this.merged.length}`;
+		document.getElementById("rbm_num_all_parts").innerHTML = `${hasFilter ? `${this.filteredCount} of ` : ''}${this.mergedCount}`;
 
 		let rows = "";
 		for (let i = 0; i < this.filtered.length; i++) {

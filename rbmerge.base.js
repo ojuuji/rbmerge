@@ -47,7 +47,7 @@ class RBmerge {
 	setup() {
 		if (this.parse()) {
 			this.resetTable();
-			this.init().then(() => this.apply());
+			this.init().then(() => this.merge());
 		}
 	}
 
@@ -71,6 +71,7 @@ class RBmerge {
 				refPartNum: partNum,
 				count: Number(count),
 				color: color,
+				colorLowerCase: color.toLowerCase(),
 				name: name,
 				nameLowerCase: name.toLowerCase(),
 				sortFactor: 0,
@@ -135,7 +136,7 @@ class RBmerge {
 		return 0;
 	}
 
-	apply() {
+	merge() {
 		let map = new Map();
 
 		for (const part of this.inventory) {
@@ -180,58 +181,68 @@ class RBmerge {
 		this.filter(true);
 	}
 
+	filterFrom(isName, source, filter) {
+		let filtered = [];
+		let filteredCount = 0;
+
+		if (this.filterGroups) {
+			for (const group of source) {
+				let groupFilter = [...filter];
+				grouploop: for (const part of group) {
+					for (let i = groupFilter.length - 1; i >= 0; i --) {
+						if ((isName ? part.nameLowerCase : part.colorLowerCase).includes(groupFilter[i])) {
+							groupFilter.splice(i, 1);
+							if (groupFilter.length == 0) {
+								break grouploop;
+							}
+						}
+					}
+				}
+				if (groupFilter.length == 0) {
+					filtered.push(group);
+					group.forEach(part => filteredCount += part.count);
+				}
+			}
+		}
+		else {
+			for (const group of source) {
+				let filteredGroup = [];
+				for (const part of group) {
+					let matches = true;
+					for (const word of filter) {
+						matches = matches && (isName ? part.nameLowerCase : part.colorLowerCase).includes(word);
+					}
+					if (matches) {
+						filteredGroup.push(part);
+						filteredCount += part.count
+					}
+				}
+				if (filteredGroup.length !== 0) {
+					filtered.push(filteredGroup);
+				}
+			}
+		}
+
+		return [filtered, filteredCount];
+	}
+
 	filter(force = false) {
-		const filter = new Set(document.getElementById("rbm_filter").value.toLowerCase().match(/\S+/g));
-		if (!force && this.lastFilter !== undefined && filter.size === this.lastFilter.size && [...filter].every(x => this.lastFilter.has(x))) {
+		const filterColor = new Set(document.getElementById("rbm_filter_color").value.toLowerCase().match(/\S+/g));
+		const filterName = new Set(document.getElementById("rbm_filter_name").value.toLowerCase().match(/\S+/g));
+		if (!force && this.lastFilterName !== undefined && filterName.size === this.lastFilterName.size && [...filterName].every(x => this.lastFilterName.has(x))
+				&& this.lastFilterColor !== undefined && filterColor.size === this.lastFilterColor.size && [...filterColor].every(x => this.lastFilterColor.has(x))) {
 			return;
 		}
-		this.lastFilter = filter;
+		this.lastFilterColor = filterColor;
+		this.lastFilterName = filterName;
 
-		if (filter.size === 0) {
+		if (filterColor.size === 0 && filterName.size === 0) {
 			this.filtered = this.merged;
 			this.filteredCount = this.mergedCount;
 		}
 		else {
-			this.filtered = [];
-			this.filteredCount = 0;
-
-			if (this.filterGroups) {
-				for (const group of this.merged) {
-					let groupFilter = [...filter];
-					grouploop: for (const part of group) {
-						for (let i = groupFilter.length - 1; i >= 0; i --) {
-							if (part.nameLowerCase.includes(groupFilter[i])) {
-								groupFilter.splice(i, 1);
-								if (groupFilter.length == 0) {
-									break grouploop;
-								}
-							}
-						}
-					}
-					if (groupFilter.length == 0) {
-						this.filtered.push(group);
-						group.forEach(part => this.filteredCount += part.count);
-					}
-				}
-			}
-			else {
-				for (const group of this.merged) {
-					let filteredGroup = [];
-					for (const part of group) {
-						let matches = true;
-						for (const word of filter) {
-							matches = matches && part.nameLowerCase.includes(word);
-						}
-						if (matches) {
-							filteredGroup.push(part);
-							this.filteredCount += part.count
-						}
-					}
-					if (filteredGroup.length !== 0) {
-						this.filtered.push(filteredGroup);
-					}
-				}
-			}
+			let [filtered, filteredColor] = filterColor.size === 0 ? [this.merged, this.mergedCount] : this.filterFrom(false, this.merged, filterColor);
+			[this.filtered, this.filteredCount] = filterName.size === 0 ? [filtered, filteredColor] : this.filterFrom(true, filtered, filterName);
 		}
 
 		this.render();
@@ -296,8 +307,8 @@ class RBmerge {
 		document.getElementsByTagName('thead')[0].innerHTML = `
 <th>Ref Part Num (<span id="rbm_num_ref_parts">0</span>)</th>
 <th>Quantity (<span id="rbm_num_all_parts">0</span>)</th>
-<th>Colors</th>
-<th><input style="width:100%" type="text" placeholder="Description" id="rbm_filter"/></th>
+<th><input style="width:100%" type="text" placeholder="Colors" id="rbm_filter_color"/></th>
+<th><input style="width:100%" type="text" placeholder="Description" id="rbm_filter_name"/></th>
 `;
 		document.getElementsByTagName('tbody')[0].innerHTML = "Loading ...";
 
@@ -313,9 +324,10 @@ class RBmerge {
 </div>
 `
 		for (const id of ["rbm_prints", "rbm_patterns", "rbm_molds", "rbm_alts", "rbm_extra"]) {
-			document.getElementById(id).addEventListener('change', () => this.apply());
+			document.getElementById(id).addEventListener('change', () => this.merge());
 		}
-		document.getElementById("rbm_filter").addEventListener('input', () => this.filter());
+		document.getElementById("rbm_filter_color").addEventListener('input', () => this.filter());
+		document.getElementById("rbm_filter_name").addEventListener('input', () => this.filter());
 	}
 
 	render() {

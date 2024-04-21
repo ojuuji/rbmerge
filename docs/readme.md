@@ -96,7 +96,7 @@ where `<N>` is total number of reference parts (total number of rows) in the tab
 |---|---|
 |Example of the table header|Parts count on Rebrickable|
 
-Each row contains single and unique reference part number in `Ref Part Num` column. They are unique because colors are always merged regardless of the merge options, which are described below.
+Each row contains single and unique reference part number in `Ref Part Num` column. They are unique because colors are always merged regardless of the merge options.
 
 ## Merge Options
 

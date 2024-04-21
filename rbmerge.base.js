@@ -1,4 +1,3 @@
-var rbMerge = {};
 (function() {
 "use strict";
 
@@ -26,15 +25,25 @@ const options_ = (function() {
 		}
 	}
 
+	const optionSpecs = [
+		['merge_prints', true],
+		['merge_patterns', true],
+		['merge_molds', true],
+		['merge_alternates', true],
+		['merge_extra', true],
+		['filter_color', ''],
+		['filter_name', ''],
+	];
 	let obj = {};
-	for (const [propName, defaultValue] of [['merge_prints', 1], ['merge_patterns', 1], ['merge_molds', 1], ['merge_alternates', 1], ['merge_extra', 1]]) {
+	for (const [propName, defaultValue] of optionSpecs) {
 		Object.defineProperty(obj, propName, {
 			get() {
-				return 0 != (isLocalStorageAvailable() ? (localStorage.getItem(propName) || defaultValue) : defaultValue);
+				const value = isLocalStorageAvailable() ? localStorage.getItem(propName) : null;
+				return value === null ? defaultValue : typeof defaultValue != 'boolean' ? value : 0 != value;
 			},
 			set(value) {
 				if (isLocalStorageAvailable()) {
-					localStorage.setItem(propName, value ? 1 : 0);
+					localStorage.setItem(propName, typeof defaultValue != 'boolean' ? value : value ? 1 : 0);
 				}
 			}
 		});
@@ -80,12 +89,12 @@ async function init() {
 	colors_ = (await decompress(colorsData)).trim().split('\n');
 }
 
-rbMerge.setup = () => {
+function setup() {
 	if (parse()) {
 		resetTable();
-		init().then(() => rbMerge.merge());
+		init().then(() => merge());
 	}
-};
+}
 
 let inventory_ = [];
 
@@ -177,7 +186,7 @@ function compareColors(l, r) {
 let merged_ = [];
 let mergedCount_ = 0;
 
-rbMerge.merge = () => {
+function merge() {
 	let map = new Map();
 
 	for (const part of inventory_) {
@@ -219,8 +228,8 @@ rbMerge.merge = () => {
 		return lw[lw.length - 1].localeCompare(rw[rw.length - 1]);
 	});
 
-	rbMerge.filter(true);
-};
+	filter(true);
+}
 
 let filterGroups_ = false;
 let filterReuse_ = false;
@@ -287,7 +296,7 @@ let filteredCount_ = 0;
 let lastFilterColor_;
 let lastFilterName_;
 
-rbMerge.filter = (force = false) => {
+function filter(force = false) {
 	const filterColor = document.getElementById("rbm_filter_color").value.toLowerCase().match(/\S+/g) || [];
 	const filterName = document.getElementById("rbm_filter_name").value.toLowerCase().match(/\S+/g) || [];
 	if (!force && lastFilterName_ !== undefined && filterName.join(' ') === lastFilterName_.join(' ')
@@ -306,8 +315,8 @@ rbMerge.filter = (force = false) => {
 		[filtered_, filteredCount_] = filterName.size === 0 ? [filteredColor, filteredColorCount] : filterFrom(true, filteredColor, filterName);
 	}
 
-	rbMerge.render();
-};
+	render();
+}
 
 function partAnchor(partNum) {
 	return `<a href="https://rebrickable.com/parts/${partNum}/" target="_blank">${partNum}</a>`;
@@ -368,8 +377,8 @@ function resetTable() {
 	document.getElementsByTagName('thead')[0].innerHTML = `
 <th style="width: 7em; white-space: nowrap">@:<span id="rbm_num_ref_parts">0</span></th>
 <th style="width: 7em; white-space: nowrap">#:<span id="rbm_num_all_parts">0</span></th>
-<th style="width: 18em"><input style="width:100%" type="text" placeholder="Colors" id="rbm_filter_color"/></th>
-<th><input style="width:100%" type="text" placeholder="Description" id="rbm_filter_name"/></th>
+<th style="width: 18em"><input style="width:100%" type="text" placeholder="Colors" id="rbm_filter_color" value="${options_['filter_color']}"/></th>
+<th><input style="width:100%" type="text" placeholder="Description" id="rbm_filter_name" value="${options_['filter_name']}"/></th>
 `;
 	document.getElementsByTagName('tbody')[0].innerHTML = "Loading ...";
 
@@ -387,15 +396,21 @@ ${optionsHtml}
 	for (const name of ['prints', 'patterns', 'molds', 'alternates', 'extra']) {
 		document.getElementById('rbm_merge_' + name).addEventListener('change', ({target: element}) => {
 			options_[element.id.replace('rbm_', '')] = element.checked;
-			rbMerge.merge();
+			merge();
 		});
 	}
 
-	document.getElementById("rbm_filter_color").addEventListener('input', rbMerge.filter);
-	document.getElementById("rbm_filter_name").addEventListener('input', rbMerge.filter);
+	document.getElementById("rbm_filter_color").addEventListener('input', ({target: element}) => {
+		options_['filter_color'] = element.value;
+		filter();
+	});
+	document.getElementById("rbm_filter_name").addEventListener('input', ({target: element}) => {
+		options_['filter_name'] = element.value;
+		filter();
+	});
 }
 
-rbMerge.render = () => {
+function render() {
 	const hasFilter = mergedCount_ !== filteredCount_;
 	document.getElementById("rbm_num_ref_parts").innerHTML = `${hasFilter ? `${filtered_.length}/` : ''}${merged_.length}`;
 	document.getElementById("rbm_num_all_parts").innerHTML = `${hasFilter ? `${filteredCount_}/` : ''}${mergedCount_}`;
@@ -407,7 +422,8 @@ rbMerge.render = () => {
 		rows += row;
 	}
 	document.getElementsByTagName('tbody')[0].innerHTML = rows;
-};
-})();
+}
 
-rbMerge.setup();
+setup();
+
+})();

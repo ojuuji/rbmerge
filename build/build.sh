@@ -28,17 +28,17 @@ head -n$((FIRST_LINE-1)) "$SOURCE" > "$TARGET"
 
 echo ":: building part relationships ..."
 
-echo -en '\t\tconst relsData = "' >> "$TARGET"
+echo -en '\tconst relsData = "' >> "$TARGET"
 gzip -c9n "${WORKDIR}/../tables/rbm_part_relationships.csv" | base64 -w0 >> "$TARGET"
 echo '";' >> "$TARGET"
 
-echo -en '\t\tconst relsExData = "' >> "$TARGET"
+echo -en '\tconst relsExData = "' >> "$TARGET"
 grep -vPx '#.*|\s*' "${WORKDIR}/../tables/part_relationships_ex.csv" | gzip -9n | base64 -w0 >> "$TARGET"
 echo '";' >> "$TARGET"
 
 echo ":: building colors ..."
 
-echo -en '\t\tconst colorsData = "' >> "$TARGET"
+echo -en '\tconst colorsData = "' >> "$TARGET"
 gzip -c9n "${WORKDIR}/../tables/rbm_colors.csv" | base64 -w0 >> "$TARGET"
 echo '";' >> "$TARGET"
 

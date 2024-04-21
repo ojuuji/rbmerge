@@ -1,5 +1,6 @@
 var rbMerge = {};
 (function() {
+"use strict";
 
 async function decompress(base64string) {
 	const bytes = Uint8Array.from(atob(base64string), c => c.charCodeAt(0));
@@ -11,6 +12,35 @@ async function decompress(base64string) {
 		return new TextDecoder().decode(arrayBuffer);
 	});
 }
+
+const options_ = (function() {
+	function isLocalStorageAvailable() {
+		try {
+			const test = '__test__';
+			localStorage.setItem(test, test);
+			localStorage.removeItem(test);
+			return true;
+		}
+		catch (e) {
+			return false;
+		}
+	}
+
+	let obj = {};
+	for (const [propName, defaultValue] of [['merge_alternates', 1], ['merge_molds', 1], ['merge_prints', 1], ['merge_patterns', 1], ['merge_extra', 1]]) {
+		Object.defineProperty(obj, propName, {
+			get() {
+				return 0 != (isLocalStorageAvailable() ? (localStorage.getItem(propName) || defaultValue) : defaultValue);
+			},
+			set(value) {
+				if (isLocalStorageAvailable()) {
+					localStorage.setItem(propName, value ? 1 : 0);
+				}
+			}
+		});
+	}
+	return Object.freeze(obj);
+})();
 
 function key(partNum, rel) {
 	return `${partNum}:${rel}`;
@@ -93,12 +123,12 @@ function parse() {
 function resolve(part) {
 	let found = new Set();
 	let links = [
-		[REL_PRINT, 1000, document.getElementById('rbm_prints').checked],
-		[REL_PATTERN, 100, document.getElementById('rbm_patterns').checked],
-		[REL_ALT, 10, document.getElementById('rbm_alts').checked],
-		[REL_MOLD, 1, document.getElementById('rbm_molds').checked],
+		[REL_PRINT, 1000, document.getElementById('rbm_merge_prints').checked],
+		[REL_PATTERN, 100, document.getElementById('rbm_merge_patterns').checked],
+		[REL_ALT, 10, document.getElementById('rbm_merge_alternates').checked],
+		[REL_MOLD, 1, document.getElementById('rbm_merge_molds').checked],
 	];
-	let resolveExtra = document.getElementById('rbm_extra').checked;
+	let resolveExtra = document.getElementById('rbm_merge_extra').checked;
 	while (true) {
 		let resolved, resolvedSortFactor;
 		for (const [rel, sortFactor, shouldResolve] of links) {
@@ -343,20 +373,24 @@ function resetTable() {
 `;
 	document.getElementsByTagName('tbody')[0].innerHTML = "Loading ...";
 
+	let optionsHtml = '';
+	for (const name of ['prints', 'patterns', 'molds', 'alternates', 'extra']) {
+		optionsHtml += `\n<label style="display: inline" for="rbm_merge_${name}"><input type="checkbox" id="rbm_merge_${name}" name="rbm_merge_${name}" ${options_['merge_' + name] ? 'checked' : ''}/> ${name}</label>`;
+	}
 	document.getElementById('rbm_options').innerHTML = `
 <div style="padding: 9px">
 <label style="display: inline">Merge: </label>
-<label style="display: inline" for="rbm_prints"><input type="checkbox" id="rbm_prints" name="rbm_prints" checked/> prints</label>
-<label style="display: inline" for="rbm_patterns"><input type="checkbox" id="rbm_patterns" name="rbm_patterns" checked/> patterns</label>
-<label style="display: inline" for="rbm_molds"><input type="checkbox" id="rbm_molds" name="rbm_molds" checked/> molds</label>
-<label style="display: inline" for="rbm_alts"><input type="checkbox" id="rbm_alts" name="rbm_alts" checked/> alternates</label>
-<label style="display: inline" for="rbm_extra"><input type="checkbox" id="rbm_extra" name="rbm_extra" checked/> extra</label>
+${optionsHtml}
 </div>
 </div>
-`
-	for (const id of ["rbm_prints", "rbm_patterns", "rbm_molds", "rbm_alts", "rbm_extra"]) {
-		document.getElementById(id).addEventListener('change', rbMerge.merge);
+`;
+	for (const name of ['prints', 'patterns', 'molds', 'alternates', 'extra']) {
+		document.getElementById('rbm_merge_' + name).addEventListener('change', ({target: element}) => {
+			options_[element.id.replace('rbm_', '')] = element.checked;
+			rbMerge.merge();
+		});
 	}
+
 	document.getElementById("rbm_filter_color").addEventListener('input', rbMerge.filter);
 	document.getElementById("rbm_filter_name").addEventListener('input', rbMerge.filter);
 }

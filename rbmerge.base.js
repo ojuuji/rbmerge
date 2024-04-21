@@ -27,7 +27,7 @@ const options_ = (function() {
 	}
 
 	let obj = {};
-	for (const [propName, defaultValue] of [['merge_alternates', 1], ['merge_molds', 1], ['merge_prints', 1], ['merge_patterns', 1], ['merge_extra', 1]]) {
+	for (const [propName, defaultValue] of [['merge_prints', 1], ['merge_patterns', 1], ['merge_molds', 1], ['merge_alternates', 1], ['merge_extra', 1]]) {
 		Object.defineProperty(obj, propName, {
 			get() {
 				return 0 != (isLocalStorageAvailable() ? (localStorage.getItem(propName) || defaultValue) : defaultValue);
@@ -125,8 +125,8 @@ function resolve(part) {
 	let links = [
 		[REL_PRINT, 1000, document.getElementById('rbm_merge_prints').checked],
 		[REL_PATTERN, 100, document.getElementById('rbm_merge_patterns').checked],
-		[REL_ALT, 10, document.getElementById('rbm_merge_alternates').checked],
 		[REL_MOLD, 1, document.getElementById('rbm_merge_molds').checked],
+		[REL_ALT, 10, document.getElementById('rbm_merge_alternates').checked],
 	];
 	let resolveExtra = document.getElementById('rbm_merge_extra').checked;
 	while (true) {

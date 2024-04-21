@@ -188,12 +188,20 @@ class RBmerge {
 		if (this.filterGroups) {
 			for (const group of source) {
 				let groupFilter = [...filter];
+				let lastText;
 				grouploop: for (const part of group) {
-					for (let i = groupFilter.length - 1; i >= 0; i --) {
-						if ((isName ? part.nameLowerCase : part.colorLowerCase).includes(groupFilter[i])) {
-							groupFilter.splice(i, 1);
-							if (groupFilter.length == 0) {
-								break grouploop;
+					let text = isName ? part.nameLowerCase : part.colorLowerCase;
+					if (lastText !== text) {
+						lastText = text;
+						for (let i = groupFilter.length - 1; i >= 0; i --) {
+							if (text.includes(groupFilter[i])) {
+								if (!this.filterReuse) {
+									text = text.replace(groupFilter[i], '');
+								}
+								groupFilter.splice(i, 1);
+								if (groupFilter.length == 0) {
+									break grouploop;
+								}
 							}
 						}
 					}
@@ -209,8 +217,12 @@ class RBmerge {
 				let filteredGroup = [];
 				for (const part of group) {
 					let matches = true;
-					for (const word of filter) {
-						matches = matches && (isName ? part.nameLowerCase : part.colorLowerCase).includes(word);
+					let text = isName ? part.nameLowerCase : part.colorLowerCase;
+					for (let i = 0; i < filter.length && matches; i++) {
+						matches = -1 !== text.indexOf(filter[i]);
+						if (matches && !this.filterReuse) {
+							text = text.replace(filter[i], '');
+						}
 					}
 					if (matches) {
 						filteredGroup.push(part);
@@ -227,10 +239,10 @@ class RBmerge {
 	}
 
 	filter(force = false) {
-		const filterColor = new Set(document.getElementById("rbm_filter_color").value.toLowerCase().match(/\S+/g));
-		const filterName = new Set(document.getElementById("rbm_filter_name").value.toLowerCase().match(/\S+/g));
-		if (!force && this.lastFilterName !== undefined && filterName.size === this.lastFilterName.size && [...filterName].every(x => this.lastFilterName.has(x))
-				&& this.lastFilterColor !== undefined && filterColor.size === this.lastFilterColor.size && [...filterColor].every(x => this.lastFilterColor.has(x))) {
+		const filterColor = document.getElementById("rbm_filter_color").value.toLowerCase().match(/\S+/g) || [];
+		const filterName = document.getElementById("rbm_filter_name").value.toLowerCase().match(/\S+/g) || [];
+		if (!force && this.lastFilterName !== undefined && filterName.join(' ') === this.lastFilterName.join(' ')
+				&& this.lastFilterColor !== undefined && filterColor.join(' ') === this.lastFilterColor.join(' ')) {
 			return;
 		}
 		this.lastFilterColor = filterColor;
@@ -354,6 +366,7 @@ class RBmerge {
 	filtered = [];
 	filteredCount = 0;
 	filterGroups = false;
+	filterReuse = false;
 };
 
 return new RBmerge();

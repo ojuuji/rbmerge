@@ -33,7 +33,7 @@ const options_ = (function() {
 		['merge_extra', true],
 		['filter_color', ''],
 		['filter_name', ''],
-		['filter_reuse', false],
+		['filter_smart', true],
 		['filter_groups', false],
 	];
 	let obj = {};
@@ -41,7 +41,7 @@ const options_ = (function() {
 		Object.defineProperty(obj, propName, {
 			get() {
 				const value = isLocalStorageAvailable() ? localStorage.getItem(propName) : null;
-				return value === null ? defaultValue : typeof defaultValue !== 'boolean' ? value : 0 !== value;
+				return value === null ? defaultValue : typeof defaultValue !== 'boolean' ? value : 0 != value;
 			},
 			set(value) {
 				if (isLocalStorageAvailable()) {
@@ -238,6 +238,18 @@ function merge() {
 	filter();
 }
 
+function matchFilter(text, filter) {
+	if (options_['filter_smart']) {
+		const pattern = /^\d+$/.test(filter) ? new RegExp(`\\b${filter}\\b`) : filter;
+		const newText = text.replace(pattern, '');
+		return [newText.length !== text.length, newText];
+	}
+	else {
+		const matched = text.includes(filter);
+		return [matched, text];
+	}
+}
+
 function filterFrom(isName, source, filter) {
 	let filtered = [];
 	let filteredCount = 0;
@@ -248,13 +260,13 @@ function filterFrom(isName, source, filter) {
 			let lastText;
 			grouploop: for (const part of group) {
 				let text = isName ? part.nameLowerCase : part.colorLowerCase;
+				// Still skip duplicate names (e.g. same parts with different colors)
 				if (lastText !== text) {
 					lastText = text;
 					for (let i = groupFilter.length - 1; i >= 0; i --) {
-						if (text.includes(groupFilter[i])) {
-							if (!options_['filter_reuse']) {
-								text = text.replace(groupFilter[i], '');
-							}
+						const [matched, newText] = matchFilter(text, groupFilter[i]);
+						if (matched) {
+							text = newText;
 							groupFilter.splice(i, 1);
 							if (groupFilter.length === 0) {
 								break grouploop;
@@ -276,10 +288,7 @@ function filterFrom(isName, source, filter) {
 				let matches = true;
 				let text = isName ? part.nameLowerCase : part.colorLowerCase;
 				for (let i = 0; i < filter.length && matches; i++) {
-					matches = -1 !== text.indexOf(filter[i]);
-					if (matches && !options_['filter_reuse']) {
-						text = text.replace(filter[i], '');
-					}
+					[matches, text] = matchFilter(text, filter[i]);
 				}
 				if (matches) {
 					filteredGroup.push(part);
@@ -387,7 +396,7 @@ function resetTable() {
 <label style="display: inline">Merge: </label>
 ${optionsHtml}
 <label style="margin-left: 3ch; display: inline">Filter: </label>
-<label style="margin-left: 1ch; display: inline" for="rbm_filter_reuse"><input type="checkbox" id="rbm_filter_reuse" name="rbm_filter_reuse" ${options_['filter_reuse'] ? 'checked' : ''}/> reuse matched text</label>
+<label style="margin-left: 1ch; display: inline" for="rbm_filter_smart"><input type="checkbox" id="rbm_filter_smart" name="rbm_filter_smart" ${options_['filter_smart'] ? 'checked' : ''}/> smart matching</label>
 <label style="margin-left: 1ch; display: inline" for="rbm_filter_groups"><input type="checkbox" id="rbm_filter_groups" name="rbm_filter_groups" ${options_['filter_groups'] ? 'checked' : ''}/> filter by groups</label>
 </div>
 </div>
@@ -406,7 +415,7 @@ ${optionsHtml}
 		});
 	}
 
-	for (const name of ['reuse', 'groups']) {
+	for (const name of ['smart', 'groups']) {
 		document.getElementById('rbm_filter_' + name).addEventListener('change', ({target: element}) => {
 			options_[element.id.replace('rbm_', '')] = element.checked;
 			filter();

@@ -20,7 +20,7 @@ const options_ = (function() {
 			localStorage.removeItem(test);
 			return true;
 		}
-		catch (e) {
+		catch {
 			return false;
 		}
 	}
@@ -33,17 +33,24 @@ const options_ = (function() {
 		['merge_extra', true],
 		['filter_color', ''],
 		['filter_name', ''],
+		['filter_reuse', false],
+		['filter_groups', false],
 	];
 	let obj = {};
 	for (const [propName, defaultValue] of optionSpecs) {
 		Object.defineProperty(obj, propName, {
 			get() {
 				const value = isLocalStorageAvailable() ? localStorage.getItem(propName) : null;
-				return value === null ? defaultValue : typeof defaultValue != 'boolean' ? value : 0 != value;
+				return value === null ? defaultValue : typeof defaultValue !== 'boolean' ? value : 0 !== value;
 			},
 			set(value) {
 				if (isLocalStorageAvailable()) {
-					localStorage.setItem(propName, typeof defaultValue != 'boolean' ? value : value ? 1 : 0);
+					if (defaultValue === value) {
+						localStorage.removeItem(propName);
+					}
+					else {
+						localStorage.setItem(propName, typeof defaultValue !== 'boolean' ? value : value ? 1 : 0);
+					}
 				}
 			}
 		});
@@ -100,7 +107,7 @@ let inventory_ = [];
 
 function parse() {
 	let table = "";
-	if (document.getElementsByTagName('table').length == 1) {
+	if (document.getElementsByTagName('table').length === 1) {
 		table = document.getElementsByTagName('table')[0].innerHTML;
 	}
 	const thead = "<tr>\n<th>Image</th>\n<th>Part Num</th>\n<th>Quantity</th>\n<th>Color</th>\n<th>Description</th>\n</tr>\n";
@@ -146,7 +153,7 @@ function resolve(part) {
 				if (resolved === undefined && resolveExtra) {
 					for (const {regex, partNum} of relsEx_.get(rel)) {
 						let replaced = part.refPartNum.replace(regex, partNum);
-						if (replaced != part.refPartNum) {
+						if (replaced !== part.refPartNum) {
 							resolved = replaced;
 							break;
 						}
@@ -213,12 +220,12 @@ function merge() {
 		// Make it smarter a bit so that for example "Brick 1 x 2" comes _before_ "Brick 1 x 16"
 		const lw = l[0].nameLowerCase.split(' ').reverse();
 		const rw = r[0].nameLowerCase.split(' ').reverse();
-		while (lw.length > 0 && rw.length > 0 && lw[lw.length - 1] == rw[rw.length - 1]) {
+		while (lw.length > 0 && rw.length > 0 && lw[lw.length - 1] === rw[rw.length - 1]) {
 			lw.pop();
 			rw.pop();
 		}
-		if (lw.length == 0 || rw.length == 0) {
-			return lw.length != 0 ? 1 : rw.length != 0 ? -1 : 0;
+		if (lw.length === 0 || rw.length === 0) {
+			return lw.length !== 0 ? 1 : rw.length !== 0 ? -1 : 0;
 		}
 		const ln = parseInt(lw[lw.length - 1]);
 		const rn = parseInt(rw[rw.length - 1]);
@@ -228,17 +235,14 @@ function merge() {
 		return lw[lw.length - 1].localeCompare(rw[rw.length - 1]);
 	});
 
-	filter(true);
+	filter();
 }
-
-let filterGroups_ = false;
-let filterReuse_ = false;
 
 function filterFrom(isName, source, filter) {
 	let filtered = [];
 	let filteredCount = 0;
 
-	if (filterGroups_) {
+	if (options_['filter_groups']) {
 		for (const group of source) {
 			let groupFilter = [...filter];
 			let lastText;
@@ -248,18 +252,18 @@ function filterFrom(isName, source, filter) {
 					lastText = text;
 					for (let i = groupFilter.length - 1; i >= 0; i --) {
 						if (text.includes(groupFilter[i])) {
-							if (!filterReuse_) {
+							if (!options_['filter_reuse']) {
 								text = text.replace(groupFilter[i], '');
 							}
 							groupFilter.splice(i, 1);
-							if (groupFilter.length == 0) {
+							if (groupFilter.length === 0) {
 								break grouploop;
 							}
 						}
 					}
 				}
 			}
-			if (groupFilter.length == 0) {
+			if (groupFilter.length === 0) {
 				filtered.push(group);
 				group.forEach(part => filteredCount += part.count);
 			}
@@ -273,7 +277,7 @@ function filterFrom(isName, source, filter) {
 				let text = isName ? part.nameLowerCase : part.colorLowerCase;
 				for (let i = 0; i < filter.length && matches; i++) {
 					matches = -1 !== text.indexOf(filter[i]);
-					if (matches && !filterReuse_) {
+					if (matches && !options_['filter_reuse']) {
 						text = text.replace(filter[i], '');
 					}
 				}
@@ -293,18 +297,10 @@ function filterFrom(isName, source, filter) {
 
 let filtered_ = [];
 let filteredCount_ = 0;
-let lastFilterColor_;
-let lastFilterName_;
 
-function filter(force = false) {
-	const filterColor = document.getElementById("rbm_filter_color").value.toLowerCase().match(/\S+/g) || [];
-	const filterName = document.getElementById("rbm_filter_name").value.toLowerCase().match(/\S+/g) || [];
-	if (!force && lastFilterName_ !== undefined && filterName.join(' ') === lastFilterName_.join(' ')
-			&& lastFilterColor_ !== undefined && filterColor.join(' ') === lastFilterColor_.join(' ')) {
-		return;
-	}
-	lastFilterColor_ = filterColor;
-	lastFilterName_ = filterName;
+function filter() {
+	const filterColor = options_['filter_color'].toLowerCase().match(/\S+/g) || [];
+	const filterName = options_['filter_name'].toLowerCase().match(/\S+/g) || [];
 
 	if (filterColor.size === 0 && filterName.size === 0) {
 		filtered_ = merged_;
@@ -335,8 +331,8 @@ function renderRow(group) {
 		count += part.count;
 		
 		if (i > 0) {
-			// colors += prevPartNum != part.partNum ? "<hr>" : "<br>";
-			colors += prevSortFactor != part.sortFactor ? "<hr>" : "<br>";
+			// colors += prevPartNum !== part.partNum ? "<hr>" : "<br>";
+			colors += prevSortFactor !== part.sortFactor ? "<hr>" : "<br>";
 		}
 		// prevPartNum = part.partNum;
 		prevSortFactor = part.sortFactor;
@@ -354,8 +350,8 @@ function renderRow(group) {
 	}
 
 	let desc = "";
-	if (countPerPartNum.size == 1) {
-		if (group[0].partNum == group[0].refPartNum) {
+	if (countPerPartNum.size === 1) {
+		if (group[0].partNum === group[0].refPartNum) {
 			desc = group[0].name;
 		}
 		else {
@@ -384,12 +380,15 @@ function resetTable() {
 
 	let optionsHtml = '';
 	for (const name of ['prints', 'patterns', 'molds', 'alternates', 'extra']) {
-		optionsHtml += `\n<label style="display: inline" for="rbm_merge_${name}"><input type="checkbox" id="rbm_merge_${name}" name="rbm_merge_${name}" ${options_['merge_' + name] ? 'checked' : ''}/> ${name}</label>`;
+		optionsHtml += `\n<label style="margin-left: 1ch; display: inline" for="rbm_merge_${name}"><input type="checkbox" id="rbm_merge_${name}" name="rbm_merge_${name}" ${options_['merge_' + name] ? 'checked' : ''}/> ${name}</label>`;
 	}
 	document.getElementById('rbm_options').innerHTML = `
 <div style="padding: 9px">
 <label style="display: inline">Merge: </label>
 ${optionsHtml}
+<label style="margin-left: 3ch; display: inline">Filter: </label>
+<label style="margin-left: 1ch; display: inline" for="rbm_filter_reuse"><input type="checkbox" id="rbm_filter_reuse" name="rbm_filter_reuse" ${options_['filter_reuse'] ? 'checked' : ''}/> reuse matched text</label>
+<label style="margin-left: 1ch; display: inline" for="rbm_filter_groups"><input type="checkbox" id="rbm_filter_groups" name="rbm_filter_groups" ${options_['filter_groups'] ? 'checked' : ''}/> filter by groups</label>
 </div>
 </div>
 `;
@@ -400,14 +399,19 @@ ${optionsHtml}
 		});
 	}
 
-	document.getElementById("rbm_filter_color").addEventListener('input', ({target: element}) => {
-		options_['filter_color'] = element.value;
-		filter();
-	});
-	document.getElementById("rbm_filter_name").addEventListener('input', ({target: element}) => {
-		options_['filter_name'] = element.value;
-		filter();
-	});
+	for (const name of ['color', 'name']) {
+		document.getElementById('rbm_filter_' + name).addEventListener('input', ({target: element}) => {
+			options_[element.id.replace('rbm_', '')] = element.value;
+			filter();
+		});
+	}
+
+	for (const name of ['reuse', 'groups']) {
+		document.getElementById('rbm_filter_' + name).addEventListener('change', ({target: element}) => {
+			options_[element.id.replace('rbm_', '')] = element.checked;
+			filter();
+		});
+	}
 }
 
 function render() {

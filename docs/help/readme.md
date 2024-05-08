@@ -1,6 +1,10 @@
 - [Table Structure](#table-structure)
   - [Header](#header)
-- [Merging Options](#merging-parts)
+  - [Column #1: Reference Part Number](#column-1-reference-part-number)
+  - [Column #2: Number of Parts](#column-2-number-of-parts)
+  - [Column #3: Colors](#column-3-colors)
+  - [Column #4: Description](#column-4-description)
+- [Merging Parts](#merging-parts)
 - [Filtering Parts](#filtering-parts)
 
 ## Table Structure

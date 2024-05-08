@@ -4,9 +4,12 @@
 @import "{{ site.theme }}";
 
 pre.highlight {
-  border: solid 1px #dce6f0
+  border: 1px solid #dce6f0;
 }
 
 h1 + ul {
-  float: right
+  float: right;
+  padding: 1em;
+  background-color: white;
+  border: 1px solid #eaecef;
 }

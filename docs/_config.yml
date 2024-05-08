@@ -1,2 +1,3 @@
 title: RBmerge
 remote_theme: pages-themes/primer@v0.6.0
+exclude: [app]

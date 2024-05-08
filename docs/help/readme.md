@@ -19,11 +19,11 @@ Table consists of four columns:
 4. **`Description`**. Header is an edit box which acts as a filter for the part names.
 
 Example:
-![Example of the table header](img/table_header.png)
+![Example of the table header](../assets/images/table_header.png)
 
 If everything went well, then the number of parts should actually be equal to the number of parts on Rebrickable page `All My Parts`:
 
-![Parts count on Rebrickable](img/parts_count_on_rb.png)
+![Parts count on Rebrickable](../assets/images/parts_count_on_rb.png)
 
 ### Column #1: Reference Part Number
 

@@ -6,7 +6,7 @@ In some cases this may be more convenient or faster than using the site. Though 
 
 Suppose you are prototyping something and you want to know how many Technic connectors <a href="https://rebrickable.com/parts/42195/">42195</a> you have. If you have this part in more than one color, there will be multiple rows for it, scattered over the table. If you are more "lucky", there will even be rows with an older mold variant <a href="https://rebrickable.com/parts/26287/">26287</a>:
 
-![Example of original part 42195](img/example_42195_original.png)
+![Example of original part 42195](assets/images/example_42195_original.png)
 
 But you just want to know how many such connectors you have, regardless of their colors or molds, which you may not even know they exist.
 
@@ -14,7 +14,7 @@ This is where RBmerge may be handy. Given a table with all your parts as an inpu
 
 This is how the row for part 42195, mentioned above, may look after merging table by RBmerge:
 
-![Example of merged part 42195](img/example_42195_merged.png)
+![Example of merged part 42195](assets/images/example_42195_merged.png)
 
 Now all part variants are listed together while still retaining info about variations. For example, you still can check how many colors are there, or how many molds and parts per mold. Detailed description of the table structure can be found in the [Help → Table Structure](help/#table-structure) topic.
 

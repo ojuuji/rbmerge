@@ -4,13 +4,7 @@ First you need to export HTML table with all your parts from Rebrickable.
 
 Log in to Rebrickable. Go to `My LEGO` → `All My Parts` → `Export Parts` → `HTML Table`:
 
-![How to export all parts as HTML table](img/export_parts.png)
-
-![How to export all parts as HTML table](/img/export_parts.png)
-
-![How to export all parts as HTML table](../img/export_parts.png)
-
-![How to export all parts as HTML table](./../img/export_parts.png)
+![How to export all parts as HTML table](../assets/images/export_parts.png)
 
 This will load a table with all your parts.
 
@@ -19,13 +13,13 @@ Save it to a file, and, when saving, select "HTML Only" (available in all major 
 ```diff
  <script type="text/javascript" src="https://rebrickable.com/static/plugins/jquery/jquery-3.5.1.min.js"></script>
  <script type="text/javascript" src="https://rebrickable.com/static/plugins/lazyload/jquery.lazyloadxt.extra.min.js"></script>
-+<script type="text/javascript" src="https://ojuuji.github.io/rbmerge/js/rbmerge.min.js"></script>
++<script type="text/javascript" src="https://ojuuji.github.io/rbmerge/assets/js/rbmerge.min.js"></script>
  </body>
 ```
 
 This way you will have single HTML file, which requests all necessary assets from the Internet. Normally it requests them only once and then they are cached, so after the first open you should be able to use it without the Internet access.
 
-Alternatively, if you want to keep assets locally, you can select "Complete Webpage" when saving HTML. In this case browser saves all assets to `<filename>_files` directory placed along with the saved HTML file. You can download [rbmerge.min.js](js/rbmerge.min.js) to this directory and refer it in the saved HTML file the following way. In this example HTML was saved as `My Parts.html`:
+Alternatively, if you want to keep assets locally, you can select "Complete Webpage" when saving HTML. In this case browser saves all assets to `<filename>_files` directory placed along with the saved HTML file. You can download [rbmerge.min.js](../assets/js/rbmerge.min.js) to this directory and refer it in the saved HTML file the following way. In this example HTML was saved as `My Parts.html`:
 
 ```diff
  <script type="text/javascript" src="My Parts_files/jquery-3.5.1.min.js"></script>

@@ -378,11 +378,13 @@ function renderRow(group) {
 }
 
 function resetTable() {
+	document.getElementsByTagName('head')[0].innerHTML += '<style>hr{border-top: 1px solid #DDD; margin: 0}</style>';
+
 	document.getElementsByTagName('body')[0].innerHTML = '<div id="rbm_options"></div>' + document.getElementsByTagName('table')[0].outerHTML;
 	document.getElementsByTagName('thead')[0].innerHTML = `
-<th style="width: 7em; white-space: nowrap">@:<span id="rbm_num_ref_parts">0</span></th>
-<th style="width: 7em; white-space: nowrap">#:<span id="rbm_num_all_parts">0</span></th>
-<th style="width: 18em"><input style="width:100%" type="text" placeholder="Colors" id="rbm_filter_color" value="${options_['filter_color']}"/></th>
+<th style="width: 12ch; white-space: nowrap" id="rbm_num_ref_parts">0</th>
+<th style="width: 12ch; white-space: nowrap" id="rbm_num_all_parts">0</th>
+<th style="width: 32ch"><input style="width:100%" type="text" placeholder="Colors" id="rbm_filter_color" value="${options_['filter_color']}"/></th>
 <th><input style="width:100%" type="text" placeholder="Description" id="rbm_filter_name" value="${options_['filter_name']}"/></th>
 `;
 	document.getElementsByTagName('tbody')[0].innerHTML = "Loading ...";
@@ -435,6 +437,9 @@ function render() {
 		rows += row;
 	}
 	document.getElementsByTagName('tbody')[0].innerHTML = rows;
+
+	// Reapply lazy-load. RB uses jquery.lazyloadxt.extra.min.js
+	$(window).lazyLoadXT?.();
 }
 
 setup();

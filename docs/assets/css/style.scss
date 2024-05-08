@@ -8,17 +8,23 @@ body {
 }
 
 .root {
-  background: linear-gradient(to right, #EEE 0%, #BBB 1%, #FFF 1%, #FFF 99%, #BBB 99%, #EEE 100%);
+  background-color: #FFF;
+}
+
+@media (min-width: 1012px) {
+  .root {
+    background: linear-gradient(to right, #EEE 0%, #BBB 1%, #FFF 1%, #FFF 99%, #BBB 99%, #EEE 100%);
+  }
 }
 
 pre.highlight {
-  border: 1px solid #dce6f0;
+  border: 1px solid #DCE6F0;
 }
 
 h1 + ul {
   float: right;
   padding: 1em;
-  background-color: white;
-  border: 1px solid #eaecef;
+  background-color: #FFF;
+  border: 1px solid #EAECEF;
   font-size: 0.9em;
 }

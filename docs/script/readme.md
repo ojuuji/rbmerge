@@ -1,10 +1,21 @@
-# Installation
+# Script
+
+Script transforms HTML table from Rebrickable `All My Parts` as demonstrated below:
+
+![test1](../assets/images/example_42195_original.png) to ![test2](../assets/images/example_42195_merged.png)
+
+## Userscript Installation
+
+TODO
+
+## Manual Installation
 
 First you need to export HTML table with all your parts from Rebrickable.
 
-Log in to Rebrickable. Go to `My LEGO` → `All My Parts` → `Export Parts` → `HTML Table`:
+Log in to Rebrickable. Go to `My LEGO` → `All My Parts` → `Export Parts` → `HTML Table`: <details><summary>Screenshot</summary>
 
 ![How to export all parts as HTML table](../assets/images/export_parts.png)
+</details>
 
 This will load a table with all your parts.
 

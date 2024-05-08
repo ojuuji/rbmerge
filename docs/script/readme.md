@@ -8,6 +8,10 @@ Log in to Rebrickable. Go to `My LEGO` → `All My Parts` → `Export Parts` →
 
 ![How to export all parts as HTML table](/img/export_parts.png)
 
+![How to export all parts as HTML table](../img/export_parts.png)
+
+![How to export all parts as HTML table](./../img/export_parts.png)
+
 This will load a table with all your parts.
 
 Save it to a file, and, when saving, select "HTML Only" (available in all major browsers). Now open saved HTML file in a text editor and add this line before closing `</body>` tag (for the info, `'+'` (plus) sign at the beginning of the line is used for highlighting and should not be added to the file):

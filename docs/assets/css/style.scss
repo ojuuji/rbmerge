@@ -3,6 +3,14 @@
 
 @import "{{ site.theme }}";
 
+body {
+  background-color: #EEE;
+}
+
+.root {
+  background: linear-gradient(to right, #EEE 0%, #BBB 1%, #FFF 1%, #FFF 99%, #BBB 99%, #EEE 100%);
+}
+
 pre.highlight {
   border: 1px solid #dce6f0;
 }
@@ -12,4 +20,5 @@ h1 + ul {
   padding: 1em;
   background-color: white;
   border: 1px solid #eaecef;
+  font-size: 0.9em;
 }

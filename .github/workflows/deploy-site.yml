@@ -47,22 +47,13 @@ jobs:
         with:
           source: ./www/
 
+      - name: Fix _site permissions
+        run: sudo chown runner:docker ./_site
+
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20.12.2'
-
-      - name: Test1
-        run: pwd
-
-      - name: Test2
-        run: ls -l
-
-      - name: Test3
-        run: sudo chown runner:docker ./_site
-
-      - name: Test4
-        run: ls -l
 
       - name: Install app dependencies
         working-directory: ./app

@@ -31,14 +31,6 @@ jobs:
       - name: Build rbmerge.js
         run: ./script/build.sh
 
-      - name: Minify rbmerge.js
-        uses: nizarmah/auto-minify@v3
-        with:
-          js_engine: uglify-js
-          directory: ./script/build
-          maxdepth: 1
-          output: ./www/js
-
       - name: Setup Pages
         uses: actions/configure-pages@v5
 

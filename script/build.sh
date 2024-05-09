@@ -13,7 +13,7 @@ WORKDIR="$(dirname "$ME_FULLPATH")"
 which base64 gzip > /dev/null
 
 SOURCE="${WORKDIR}/rbmerge.base.js"
-TARGET="${WORKDIR}/build/rbmerge.js"
+TARGET="${WORKDIR}/../www/js/rbmerge.js"
 
 mkdir -p "$(dirname "$TARGET")"
 

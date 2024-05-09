@@ -52,18 +52,21 @@ jobs:
         with:
           node-version: '20.12.2'
 
-      - name: Install app dependencies
-        working-directory: ./app
-        run: npm ci
-
       - name: Test1
         run: pwd
 
       - name: Test2
         run: ls -l
 
-      - name: Test2
-        run: find .
+      - name: Test3
+      - run: sudo chown runner:docker ./_site
+
+      - name: Test4
+        run: ls -l
+
+      - name: Install app dependencies
+        working-directory: ./app
+        run: npm ci
 
       - name: Build app
         working-directory: ./app

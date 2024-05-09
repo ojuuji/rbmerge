@@ -1,3 +1,3 @@
 title: RBmerge
+description: Merge parts table from Rebrickable.
 remote_theme: pages-themes/primer@v0.6.0
-exclude: [app]

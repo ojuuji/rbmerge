@@ -12,8 +12,10 @@ WORKDIR="$(dirname "$ME_FULLPATH")"
 
 which base64 gzip > /dev/null
 
-SOURCE="${WORKDIR}/../rbmerge.base.js"
-TARGET="${WORKDIR}/rbmerge.js"
+SOURCE="${WORKDIR}/rbmerge.base.js"
+TARGET="${WORKDIR}/build/rbmerge.js"
+
+mkdir -p "$(dirname "$TARGET")"
 
 FIRST_LINE=$(grep -n 'const relsData = ' "$SOURCE" | grep -Po '^\d+') || Die "failed to get index of first line to replace"
 LAST_LINE=$(grep -n 'const colorsData = ' "$SOURCE" | grep -Po '^\d+') || Die "failed to get index of last line to replace"

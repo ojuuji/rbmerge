@@ -56,6 +56,15 @@ jobs:
         working-directory: ./app
         run: npm ci
 
+      - name: Test1
+        run: pwd
+
+      - name: Test2
+        run: ls -l
+
+      - name: Test2
+        run: find .
+
       - name: Build app
         working-directory: ./app
         run: npm run build

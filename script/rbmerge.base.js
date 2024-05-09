@@ -1,5 +1,22 @@
+// ==UserScript==
+// @name         RBmerge
+// @description  Merge parts table from Rebrickable
+// @author       ojuuji
+// @homepage     https://ojuuji.github.io/rbmerge/
+// @supportURL   https://github.com/ojuuji/rbmerge/issues
+// @match        https://rebrickable.com/inventory/*/parts/?format=table&*
+// @match        https://rebrickable.com/users/*/allparts/parts/?format=table&*
+// @match        https://rebrickable.com/users/*/partlists/parts/?format=table&*
+// @match        https://rebrickable.com/users/*/partlists/*/parts/?format=table&*
+// @match        https://rebrickable.com/users/*/lostparts/parts/?format=table&*
+// @match        https://rebrickable.com/users/*/lists/*/parts/?format=table&*
+// @match        https://rebrickable.com/sets/compare/slow/?format=table&*
+// @icon         https://www.google.com/s2/favicons?sz=64&domain=rebrickable.com
+// @grant        none
+// ==/UserScript==
+
 (function() {
-"use strict";
+'use strict';
 
 async function decompress(base64string) {
 	const bytes = Uint8Array.from(atob(base64string), c => c.charCodeAt(0));

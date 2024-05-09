@@ -59,7 +59,7 @@ jobs:
         run: ls -l
 
       - name: Test3
-      - run: sudo chown runner:docker ./_site
+        run: sudo chown runner:docker ./_site
 
       - name: Test4
         run: ls -l

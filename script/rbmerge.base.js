@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name         RBmerge
-// @version      2024-05-09
+// @version      2024-05-10
 // @description  Merge part tables from Rebrickable.
 // @author       ojuuji
-// @homepage     https://ojuuji.github.io/rbmerge/
+// @source       https://ojuuji.github.io/rbmerge/
 // @supportURL   https://github.com/ojuuji/rbmerge/issues
 // @match        https://rebrickable.com/inventory/*/parts/?format=table&*
 // @match        https://rebrickable.com/users/*/allparts/parts/?format=table&*
@@ -183,7 +183,7 @@ function resolve(part) {
 				}
 			}
 		}
-		
+
 		if (resolved === undefined) {
 			return part;
 		}
@@ -352,11 +352,11 @@ function renderRow(group) {
 	let countPerPartNum = new Map();
 	// let prevPartNum = "";
 	let prevSortFactor = 0;
-	
+
 	for (let i = 0; i < group.length; i++) {
 		const part = group[i];
 		count += part.count;
-		
+
 		if (i > 0) {
 			// colors += prevPartNum !== part.partNum ? "<hr>" : "<br>";
 			colors += prevSortFactor !== part.sortFactor ? "<hr>" : "<br>";
@@ -366,11 +366,11 @@ function renderRow(group) {
 
 		colors += `${part.img} ${part.count} ${part.color}`;
 		colorsUniq.add(part.color);
-		
+
 		const partNumCount = countPerPartNum.has(part.partNum) ? countPerPartNum.get(part.partNum).count : 0;
 		countPerPartNum.set(part.partNum, {count : part.count + partNumCount, name: part.name});
 	}
-	
+
 	let total = `${count}`;
 	if (colorsUniq.size > 1) {
 		total += ` in ${colorsUniq.size} colors`;

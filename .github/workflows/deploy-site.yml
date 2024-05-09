@@ -47,9 +47,6 @@ jobs:
         with:
           source: ./www/
 
-      - name: Fix _site permissions
-        run: sudo chown runner:docker ./_site
-
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
@@ -62,6 +59,9 @@ jobs:
       - name: Build app
         working-directory: ./app
         run: npm run build
+
+      - name: Move app to artifact
+        run: sudo chown runner:docker ./_site && mv ./app/build ./_site/app
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3

@@ -1,2 +1,5 @@
+/app/build
+/app/node_modules
+/app/.env.local
+/app/.env.*.local
 /script/build/
-/_site/

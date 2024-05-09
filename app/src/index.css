@@ -1,0 +1,25 @@
+.App {
+  padding: 0;
+}
+
+:not(pre) > code {
+  padding: 1px 2px;
+  border-radius: 3px;
+}
+
+a.inventory-partnum {
+  text-decoration: none;
+}
+
+@media (min-width: 992px) {
+  .inventory-refpartnum, .inventory-numparts  {
+    width: 1%;
+    min-width: 15ch;
+    white-space: nowrap;
+  }
+
+  .inventory-colors {
+    width: 1%;
+    min-width: 34ch;
+  }
+}

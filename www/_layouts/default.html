@@ -4,13 +4,12 @@
 
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>{{ site.title }}</title>
-<link rel="canonical" href="{{ page.url | absolute_url }}">
+
+{% seo %}
+
 <link rel="icon" sizes="any" href="{{ "/app/logo.svg" | relative_url }}" type="image/svg" />
 <link rel="icon" sizes="48x48" href="{{ "/app/favicon.png" | relative_url }}" type="image/png" />
 <link rel="stylesheet" href="{{ "/css/style.css?v=" | append: site.github.build_revision | relative_url }}">
-
-{% seo %}
 
 </head>
 <body>

@@ -21,6 +21,10 @@ pre.highlight {
   border: 1px solid #DCE6F0;
 }
 
+h1 + h1 {
+  visibility: hidden;
+}
+
 h1 + ul {
   float: right;
   padding: 1em;

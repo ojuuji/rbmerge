@@ -1,0 +1,14 @@
+<svg width="400" height="400" xmlns="http://www.w3.org/2000/svg">
+<style>line,path{vector-effect:non-scaling-stroke}</style>
+ <g>
+  <rect rx="16" height="120" width="80" y="40" x="40" stroke="#888888" fill="#f2cd37"/>
+  <rect rx="16" height="120" width="80" y="40" x="160" stroke="#888888" fill="#36aebf"/>
+  <rect rx="16" height="120" width="80" y="40" x="280" stroke="#888888" fill="#ff698f"/>
+  <rect rx="16" height="120" width="100" y="240" x="80" stroke="none" fill="#f2cd37"/>
+  <rect rx="16" height="120" width="100" y="240" x="220" stroke="none" fill="#ff698f"/>
+  <rect height="120" width="80" y="240" x="160" stroke="none" fill="#36aebf"/>
+  <rect rx="16" height="120" width="240" y="240" x="80" stroke="#888888" fill="none"/>
+  <line y2="240" x2="200" y1="160" x1="200" stroke="#888888" fill="none"/>
+  <path d="M80,160 v20 a20,20 0 0 0 20,20 h200 a20,20 0 0 0 20,-20 v-20" fill="none" stroke="#888888" />
+ </g>
+</svg>

@@ -24,7 +24,7 @@ export default function Header({toggleShowImport, toggleShowOptions, toggleShowA
           <Dropdown as={Nav.Item} align='end'>
             <Dropdown.Toggle as={Nav.Link}>Help</Dropdown.Toggle>
             <Dropdown.Menu>
-              <Dropdown.Item onClick={makeOnClick('https://ojuuji.github.io/rbmerge/help/')}>Go to Documentation</Dropdown.Item>
+              <Dropdown.Item onClick={makeOnClick('https://ojuuji.github.io/rbmerge/help/')}>Documentation</Dropdown.Item>
               <Dropdown.Item onClick={makeOnClick('https://github.com/ojuuji/rbmerge/issues')}>Report an Issue</Dropdown.Item>
               <Dropdown.Item onClick={toggleShowAbout}>About</Dropdown.Item>
             </Dropdown.Menu>

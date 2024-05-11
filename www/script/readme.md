@@ -14,10 +14,9 @@ TODO
 
 In this guide will be used HTML table with all your parts, which can be exported from Rebrickable.
 
-So, first you need to export it. Log in to Rebrickable. Go to `My LEGO` → `All My Parts` → `Export Parts` → `HTML Table`: <details><summary>Screenshot</summary>
+So, first you need to export it. Log in to Rebrickable. Go to `My LEGO` → `All My Parts` → `Export Parts` → `HTML Table`:
 
 ![How to export all parts as HTML table](../images/export_all_parts.png)
-</details>
 
 This will load a table with all your parts.
 

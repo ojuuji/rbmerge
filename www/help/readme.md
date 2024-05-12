@@ -27,7 +27,7 @@ Table consists of four columns:
 Example:
 ![Example of the table header](../images/table_header.png)
 
-If everything went well, then the number of parts should actually be equal to the number of parts on Rebrickable page `All My Parts`:
+If everything went well, then the number of parts should actually be equal to the one on Rebrickable page `All My Parts`:
 
 ![Parts count on Rebrickable](../images/parts_count_on_rb.png)
 

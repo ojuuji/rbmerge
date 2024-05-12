@@ -14,15 +14,24 @@
 </head>
 <body>
 
-<div class="root container-lg p-5 markdown-body">
+<div class="root container-lg markdown-body">
 
-<h1><a href="{{ "/" | absolute_url }}">{{ site.title }}</a></h1>
+<nav>
+<span class="navbar-brand"><img class="navbar-logo" alt="Logo" src="{{ "/app/logo.svg" | relative_url }}"  width="40" height="40"> {{ site.title }}</span>
+<div class="navbar-nav">
+<a class="navbar-link {% if "/" == page.url %}active{% endif %}" href="{{ "/" | relative_url }}">Home</a>
+<a class="navbar-link external" href="{{ "/app/" | relative_url }}">App</a>
+<a class="navbar-link {% if "/script/" == page.url %}active{% endif %}" href="{{ "/script/" | relative_url }}">Script</a>
+<a class="navbar-link {% if "/help/" == page.url %}active{% endif %}" href="{{ "/help/" | relative_url }}">Help</a>
+</div>
+</nav>
+
 {{ content }}
 
 </div>
 
 <script src="{{ "/js/anchor.min.js" | relative_url }}"></script>
-<script>anchors.add('h1:not(:first-child),h2,h3');</script>
+<script>anchors.add();</script>
 
 </body>
 </html>

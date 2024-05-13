@@ -22,11 +22,10 @@ LAST_LINE=$(grep -n 'const colorsData = ' "$SOURCE" | grep -Po '^\d+') || Die "f
 
 head -n$((FIRST_LINE-1)) "$SOURCE" > "$TARGET"
 
-# At the moment of switching tables data to gzip+base64 resulting JS size
-# reduced from ~4.5mb to ~1.2mb. However, when serving to browser due to
-# 'Content-Enconding: gzip' this only saved ~33kb. Well, still something.
-# Plus no interference with JS escaping in string literals. Plus GitHub
-# now does not refuse to open JS file in viewer.
+# Due to 'Content-Enconding: gzip' applying gzip+base64 here makes almost no
+# difference for the serve sizes. However it avoids the need of JS escaping in
+# string literals. And smaller size finally allows to open it in GitHub online
+# viewer. So it is still worth it.
 
 echo ":: building part relationships ..."
 
@@ -45,5 +44,10 @@ gzip -c9n "${WORKDIR}/../tables/rbm_colors.csv" | base64 -w0 >> "$TARGET"
 echo '";' >> "$TARGET"
 
 tail -n+$((LAST_LINE+1)) "$SOURCE" >> "$TARGET"
+
+DEPS=("$SOURCE" "${WORKDIR}/../tables/"{part_relationships_ex,rbm_colors,rbm_part_relationships}.csv)
+VERSION="$(date --utc --date=@"$(git log -1 --format="%at" "${DEPS[@]}")" +%F.%H-%M-%S)"
+echo ":: embedding version number $VERSION ..."
+sed -i "/^\/\/ ==UserScript==$/a // @version      $VERSION" "$TARGET"
 
 echo ":: done"

@@ -1,6 +1,5 @@
 // ==UserScript==
 // @name         RBmerge
-// @version      2024-05-11
 // @description  Merge part tables from Rebrickable.
 // @author       ojuuji
 // @source       https://ojuuji.github.io/rbmerge/

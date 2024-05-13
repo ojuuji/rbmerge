@@ -39,10 +39,19 @@ jobs:
         with:
           source: ./www/
 
+      # after jekyll-build-pages '_site' directory is owned by root:root
+      - name: Fix permissions for artifact directory
+        run: sudo chown -R runner:docker ./_site
+
+      # plugin 'jekyll-target-blank' would help but GitHub Pages use a whitelist
+      # for plugins and that one is not in it
+      - name: Fix external links
+        run: find ./_site -name '*.html' | xargs sed -i 's|<a href="https://|<a target="_blank" href="https://|g'
+
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20.12.2'
+          node-version: 20
 
       - name: Install app dependencies
         working-directory: ./app
@@ -53,7 +62,7 @@ jobs:
         run: npm run build
 
       - name: Move app to artifact
-        run: sudo chown runner:docker ./_site && mv ./app/build ./_site/app
+        run: mv ./app/build ./_site/app
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3

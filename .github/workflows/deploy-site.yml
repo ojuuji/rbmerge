@@ -41,7 +41,7 @@ jobs:
 
       # after jekyll-build-pages '_site' directory is owned by root:root
       - name: Fix permissions for artifact directory
-        run: sudo chown runner:docker ./_site
+        run: sudo chown -R runner:docker ./_site
 
       # plugin 'jekyll-target-blank' would help but GitHub Pages use a whitelist
       # for plugins and that one is not in it

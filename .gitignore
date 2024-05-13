@@ -3,3 +3,4 @@
 /app/.env.local
 /app/.env.*.local
 /www/js/rbmerge.js
+/www/js/rbmerge.meta.js

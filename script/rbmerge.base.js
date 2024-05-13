@@ -1,20 +1,3 @@
-// ==UserScript==
-// @name         RBmerge
-// @description  Merge part tables from Rebrickable.
-// @author       ojuuji
-// @source       https://ojuuji.github.io/rbmerge/
-// @supportURL   https://github.com/ojuuji/rbmerge/issues
-// @match        https://rebrickable.com/inventory/*/parts/?format=table&*
-// @match        https://rebrickable.com/users/*/allparts/parts/?format=table&*
-// @match        https://rebrickable.com/users/*/partlists/parts/?format=table&*
-// @match        https://rebrickable.com/users/*/partlists/*/parts/?format=table&*
-// @match        https://rebrickable.com/users/*/lostparts/parts/?format=table&*
-// @match        https://rebrickable.com/users/*/lists/*/parts/?format=table&*
-// @match        https://rebrickable.com/sets/compare/slow/?format=table&*
-// @icon         https://www.google.com/s2/favicons?sz=64&domain=rebrickable.com
-// @grant        none
-// ==/UserScript==
-
 (function() {
 'use strict';
 
@@ -92,8 +75,8 @@ let relsEx_ = new Map([[REL_ALT, []], [REL_MOLD, []], [REL_PRINT, []], [REL_PATT
 
 async function init() {
 	const relsData = "";    // <-- CAUTION! These lines are replaced
-	const relsExData = "";  // <-- by the script with actual base64-
-	const colorsData = "";  // <-- encoded then gzipped tables data
+	const relsExData = "";  // <-- by the script with actual gzipped
+	const colorsData = "";  // <-- then base64-encoded tables data
 
 	// <rel_type>,<child_part_num>,<parent_part_num>\n...
 	const relSpecs = (await decompress(relsData)).trim().split('\n');

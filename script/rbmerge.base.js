@@ -379,77 +379,8 @@ function renderRow(group) {
 }
 
 function resetTable() {
-	document.getElementsByTagName('body')[0].innerHTML = `
-<style>
-#rbm_options {
-	padding-top: 8px;
-	padding-bottom: 8px;
-	display: flex;
-	flex-flow: row wrap;
-}
-fieldset {
-	padding-left: 8px;
-	padding-right: 8px;
-}
-fieldset#rbm_merge_options {
-	display: flex;
-	flex-flow: row wrap;
-	flex-basis: 260px;
-}
-legend {
-	margin-bottom: 0;
-}
-label {
-	margin-right: 8px;
-	font-weight: 400;
-}
-hr {
-	border-top: 1px solid #DDD;
-	margin: 0;
-}
-#rbm_num_ref_parts, #rbm_num_all_parts {
-	width: 12ch;
-}
-th:has(> #rbm_filter_color) {
-	width: 32ch;
-}
-th > input {
-	border:0;
-	width:100%;
-}
-th:has(> #rbm_toggle_options) {
-	width: 32px
-}
-</style>
-<div id="rbm_options">
-<fieldset id="rbm_merge_options">
-<legend>Merge</legend>
-<label for="rbm_merge_prints"><input type="checkbox" id="rbm_merge_prints" name="rbm_merge_prints"/> prints</label>
-<label for="rbm_merge_patterns"><input type="checkbox" id="rbm_merge_patterns" name="rbm_merge_patterns"/> patterns</label>
-<label for="rbm_merge_molds"><input type="checkbox" id="rbm_merge_molds" name="rbm_merge_molds"/> molds</label>
-<label for="rbm_merge_alternates"><input type="checkbox" id="rbm_merge_alternates" name="rbm_merge_alternates"/> alternates</label>
-<label for="rbm_merge_extra"><input type="checkbox" id="rbm_merge_extra" name="rbm_merge_extra"/> extra</label>
-</fieldset>
-<fieldset id="rbm_filter_options">
-<legend>Filter</legend>
-<label for="rbm_filter_smart"><input type="checkbox" id="rbm_filter_smart" name="rbm_filter_smart"/> Use smart matching</label>
-<label for="rbm_filter_groups"><input type="checkbox" id="rbm_filter_groups" name="rbm_filter_groups"/> Apply to groups instead of individual parts</label>
-</fieldset>
-</div>
-<table class="table table-striped table-bordered">
-<thead>
-<tr>
-<th id="rbm_num_ref_parts">0</th>
-<th id="rbm_num_all_parts">0</th>
-<th><input type="text" placeholder="Colors" id="rbm_filter_color"/></th>
-<th><input type="text" placeholder="Description" id="rbm_filter_name"/></th>
-<th><button title="Toggle Options" id="rbm_toggle_options"><svg xmlns="http://www.w3.org/2000/svg" fill="#444" width="24" height="24" viewBox="0 0 24 24"><style>@media(prefers-color-scheme:dark){path{fill:#BBB}}</style><path d="M24 13.616v-3.232c-1.651-.587-2.694-.752-3.219-2.019v-.001c-.527-1.271.1-2.134.847-3.707l-2.285-2.285c-1.561.742-2.433 1.375-3.707.847h-.001c-1.269-.526-1.435-1.576-2.019-3.219h-3.232c-.582 1.635-.749 2.692-2.019 3.219h-.001c-1.271.528-2.132-.098-3.707-.847l-2.285 2.285c.745 1.568 1.375 2.434.847 3.707-.527 1.271-1.584 1.438-3.219 2.02v3.232c1.632.58 2.692.749 3.219 2.019.53 1.282-.114 2.166-.847 3.707l2.285 2.286c1.562-.743 2.434-1.375 3.707-.847h.001c1.27.526 1.436 1.579 2.019 3.219h3.232c.582-1.636.75-2.69 2.027-3.222h.001c1.262-.524 2.12.101 3.698.851l2.285-2.286c-.744-1.563-1.375-2.433-.848-3.706.527-1.271 1.588-1.44 3.221-2.021zm-12 2.384c-2.209 0-4-1.791-4-4s1.791-4 4-4 4 1.791 4 4-1.791 4-4 4z"/></svg></button></th>
-</tr>
-</thead>
-<tbody>
-</tbody>
-</table
-`;
+	document.getElementsByTagName('body')[0].innerHTML = '{{TEMPLATE}}'; // CAUTION! This line is replaced during the build
+
 	for (const name of ['prints', 'patterns', 'molds', 'alternates', 'extra']) {
 		const el = document.getElementById('rbm_merge_' + name);
 		el.addEventListener('change', ({target: element}) => {

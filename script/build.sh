@@ -58,4 +58,17 @@ echo '";' >> "$TARGET"
 
 tail -n+$((LAST_LINE+1)) "$SOURCE" >> "$TARGET"
 
+TEMPLATE="${WORKDIR}/template.html"
+echo ":: embedding $(basename "$TEMPLATE") ..."
+
+TEMPLATE_LINE=$(grep -Fn "document.getElementsByTagName('body')[0].innerHTML = '{{TEMPLATE}}';" "$TARGET" | grep -Po '^\d+') || Die "failed to get line index"
+
+head -n$((TEMPLATE_LINE-1)) "$TARGET" > "${TARGET}.tmp"
+echo -e "\tdocument.getElementsByTagName('body')[0].innerHTML = \`" >> "${TARGET}.tmp"
+cat "$TEMPLATE" >> "${TARGET}.tmp"
+echo '`;' >> "${TARGET}.tmp"
+tail -n+$((TEMPLATE_LINE+1)) "$TARGET" >> "${TARGET}.tmp"
+
+mv "${TARGET}.tmp" "$TARGET"
+
 echo ":: done"

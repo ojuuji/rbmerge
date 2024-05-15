@@ -6,7 +6,7 @@ Rebrickable even provides possibility to export all parts as a single plain tabl
 
 In some cases this may be more convenient or faster than using the site. Though it may not be as convenient as it could be, because all part colors, molds, prints, patterns are listed there separately.
 
-Suppose you are prototyping something and you want to know how many Technic connectors <a href="https://rebrickable.com/parts/42195/">42195</a> you have. If you have this part in more than one color, there will be multiple rows for it, scattered over the table. If you are more "lucky", there will even be rows with an older mold variant <a href="https://rebrickable.com/parts/26287/">26287</a>.
+Suppose you are prototyping something and you want to know how many Technic connectors [42195](https://rebrickable.com/parts/42195/) you have. If you have this part in more than one color, there will be multiple rows for it, scattered over the table. If you are more "lucky", there will even be rows with an older mold variant [26287](https://rebrickable.com/parts/26287/).
 
 But you just want to know how many such connectors you have, regardless of their colors or molds, which you may not even know they exist.
 

@@ -5,6 +5,7 @@
   "private": true,
   "dependencies": {
     "bootstrap": "^5.3.3",
+    "cross-env": "^7.0.3",
     "dexie": "^4.0.4",
     "react": "^18.2.0",
     "react-bootstrap": "^2.10.2",
@@ -15,6 +16,7 @@
   "scripts": {
     "start": "node ./src/data/prepare.mjs && react-scripts start",
     "build": "node ./src/data/prepare.mjs && react-scripts build",
+    "build-localhost": "cross-env PUBLIC_URL=/ npm run build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },

@@ -1,5 +1,6 @@
 /app/build
 /app/node_modules
+/app/src/data/*.json
 /app/.env.local
 /app/.env.*.local
 /www/js/rbmerge.js

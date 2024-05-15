@@ -13,8 +13,8 @@
     "serve": "^14.2.2"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
+    "start": "node ./src/data/prepare.mjs && react-scripts start",
+    "build": "node ./src/data/prepare.mjs && react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },

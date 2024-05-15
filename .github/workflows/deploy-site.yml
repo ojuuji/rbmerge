@@ -5,6 +5,7 @@ on:
   push:
     paths:
       - 'script/*.js'
+      - 'script/template.html'
       - 'tables/*.csv'
       # - 'www/**'
 

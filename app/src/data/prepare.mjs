@@ -11,7 +11,7 @@ function prepare(sourceFile, targetFile, filter = null) {
     fs.writeFileSync(targetPath, preparedJson);
 }
 
-const sourceDir = path.join(...fileURLToPath(import.meta.url).split(path.sep).slice(0, -4), 'tables');
+const sourceDir = [...fileURLToPath(import.meta.url).split(path.sep).slice(0, -4), 'tables'].join(path.sep);
 const targetDir = path.dirname(fileURLToPath(import.meta.url));
 
 prepare('rbm_part_relationships.csv', 'rels.json');

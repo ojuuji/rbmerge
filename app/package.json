@@ -1,7 +1,7 @@
 {
   "name": "rbmerge",
   "version": "0.1.0",
-  "homepage": "https://ojuuji.github.io/rbmerge/app/",
+  "homepage": "/rbmerge/app/",
   "private": true,
   "dependencies": {
     "bootstrap": "^5.3.3",

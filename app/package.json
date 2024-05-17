@@ -1,6 +1,6 @@
 {
   "name": "rbmerge",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "homepage": "/rbmerge/app/",
   "private": true,
   "dependencies": {
@@ -14,11 +14,11 @@
     "serve": "^14.2.2"
   },
   "scripts": {
-    "start": "node ./src/data/prepare.mjs && react-scripts start",
-    "build": "node ./src/data/prepare.mjs && react-scripts build",
-    "build-localhost": "cross-env PUBLIC_URL=/ npm run build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "prestart": "node ./generate-version.mjs && node ./src/data/prepare.mjs",
+    "prebuild": "node ./generate-version.mjs && node ./src/data/prepare.mjs",
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "build-localhost": "cross-env PUBLIC_URL=/ npm run build"
   },
   "eslintConfig": {
     "extends": [

@@ -29,3 +29,21 @@ self.addEventListener('message', (event) => {
     self.skipWaiting();
   }
 });
+
+/*
+Images from Rebrickable can be cached only as opaque responses. Not sure, keep it off for now.
+https://developer.chrome.com/docs/workbox/caching-resources-during-runtime#opaque_responses
+
+registerRoute(
+  ({ request, url }) => {
+    const matched = url.host === 'cdn.rebrickable.com' && request.destination === 'image';
+    return matched;
+  },
+  new CacheFirst({
+    cacheName: 'rebrickable',
+    plugins: [
+      new CacheableResponsePlugin({ statuses: [0, 200] }),
+    ],
+  })
+);
+*/

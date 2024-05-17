@@ -1,10 +1,7 @@
 /* eslint-disable no-restricted-globals */
 
 import { clientsClaim } from 'workbox-core';
-import { CacheableResponsePlugin } from 'workbox-cacheable-response';
 import { cleanupOutdatedCaches, precacheAndRoute } from 'workbox-precaching';
-import { registerRoute } from 'workbox-routing';
-import { CacheFirst } from 'workbox-strategies';
 
 clientsClaim();
 cleanupOutdatedCaches();

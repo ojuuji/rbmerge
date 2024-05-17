@@ -14,7 +14,16 @@ root.render(
 );
 
 if (process.env.NODE_ENV === 'production') {
-  serviceWorkerRegistration.register();
+  serviceWorkerRegistration.register({
+    onUpdate(registration) {
+      registration.waiting?.addEventListener('statechange', event => {
+        if (event.target.state === 'activated') {
+          window.location.reload()
+        }
+      });
+      registration.waiting?.postMessage({type: 'SKIP_WAITING'});
+    }
+  });
 }
 else {
   serviceWorkerRegistration.unregister();

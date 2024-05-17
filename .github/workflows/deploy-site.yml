@@ -4,10 +4,11 @@ on:
   # Runs on pushes within matching path masks
   push:
     paths:
+      - 'app/**'
       - 'script/*.js'
       - 'script/template.html'
       - 'tables/*.csv'
-      # - 'www/**'
+      - 'www/**'
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:

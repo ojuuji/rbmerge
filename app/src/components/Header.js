@@ -17,7 +17,8 @@ export default function Header({toggleShowImport, toggleShowOptions, toggleShowA
       <Container fluid>
         <Navbar.Brand>
           <img alt="Logo" src={process.env.PUBLIC_URL + '/logo.svg'} width='30' height='30' className='align-top'/>
-          {' '}{process.env.REACT_APP_NAME}</Navbar.Brand>
+          {' '}{process.env.REACT_APP_NAME}
+        </Navbar.Brand>
         <Nav className='mx-2'>
           <Nav.Link onClick={toggleShowImport}>Import</Nav.Link>
           <Nav.Link onClick={toggleShowOptions}>Options</Nav.Link>

@@ -1,7 +1,6 @@
 //*
 
 import { useState } from 'react';
-import debugLog from '../utils/debugLog';
 import { Rel } from '../utils/rels';
 import relsExData from '../data/relsEx.json';
 
@@ -13,14 +12,13 @@ export default function useRelsEx() {
 /*/
 
 import { useEffect, useState } from 'react';
-import debugLog from '../utils/debugLog';
 import fetchCsv from '../utils/fetchCsv';
 import { Rel } from '../utils/rels';
 import csvPath from '../data/part_relationships_ex.csv'
 
 export default function useRelsEx() {
   const [relsEx, setRelsEx] = useState(null);
-  debugLog(`useRelsEx : ${annotate(relsEx)}`, 2);
+  console.debug(`useRelsEx : ${annotate(relsEx)}`);
 
   useEffect(() => {
     (async () => {
@@ -52,11 +50,11 @@ function parseTable(data) {
       relsEx.get(type).push({regex: new RegExp(`^${child}$`), partNum: parent});
     }
     else {
-      console.log(`unexpected spec in relsEx: ${spec}`);
+      console.warn(`unexpected spec in relsEx: ${spec}`);
     }
   }
 
-  debugLog(`useRelsEx > parseTable : ${annotate(relsEx)}`);
+  console.log(`useRelsEx > parseTable : ${annotate(relsEx)}`);
 
   return relsEx;
 }

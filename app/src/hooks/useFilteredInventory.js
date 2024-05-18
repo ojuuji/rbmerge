@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { useFilterOptions } from '../contexts/FilterOptionsProvider';
-import debugLog from '../utils/debugLog';
 import useMergedInventory from './useMergedInventory';
 
 function match(text, filter, filterSmart) {
@@ -83,7 +82,7 @@ export default function useFilteredInventory() {
   const merged = useMergedInventory();
   const [filtered, setFiltered] = useState({...merged, filtered: [], filteredCount: 0});
 
-  debugLog(`useFilteredInventory : filteredCount=${filtered.filteredCount}, filterSmart=${filterSmart} filterGroups=${filterGroups} colorFilter="${colorFilter}" nameFilter="${nameFilter}"`, 2);
+  console.debug(`useFilteredInventory : filteredCount=${filtered.filteredCount}, filterSmart=${filterSmart} filterGroups=${filterGroups} colorFilter="${colorFilter}" nameFilter="${nameFilter}"`);
 
   useEffect(() => {
     const colorWords = colorFilter.toLowerCase().match(/\S+/g) || [];
@@ -104,7 +103,7 @@ export default function useFilteredInventory() {
     }
 
     setFiltered(parts);
-    debugLog(`useFilteredInventory > setFiltered : filteredCount=${parts.filteredCount}, filterSmart=${filterSmart} filterGroups=${filterGroups} colorFilter="${colorFilter}" nameFilter="${nameFilter}"`);
+    console.log(`useFilteredInventory > setFiltered : filteredCount=${parts.filteredCount}, filterSmart=${filterSmart} filterGroups=${filterGroups} colorFilter="${colorFilter}" nameFilter="${nameFilter}"`);
   }, [merged, filterSmart, filterGroups, colorFilter, nameFilter])
 
   return filtered;

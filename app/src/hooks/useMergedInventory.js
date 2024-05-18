@@ -4,7 +4,6 @@ import useRelsEx from './useRelsEx';
 import { useMergeOptions } from '../contexts/MergeOptionsProvider';
 import { compareColors } from '../utils/colors';
 import { getInventory } from '../utils/db';
-import debugLog from '../utils/debugLog';
 import { Rel, key } from '../utils/rels';
 
 function resolve(part, [mergePrints, mergePatterns, mergeMolds, mergeAlternates, mergeExtra, rels, relsEx]) {
@@ -45,7 +44,7 @@ function resolve(part, [mergePrints, mergePatterns, mergeMolds, mergeAlternates,
       return part;
     }
     if (found.has(resolved)) {
-      console.log(`avoided circular reference involving parts ${part.refPartNum} and ${resolved}`);
+      console.warn(`avoided circular reference involving parts ${part.refPartNum} and ${resolved}`);
       return part;
     }
     found.add(resolved);
@@ -111,13 +110,13 @@ export default function useMergedInventory() {
   const relsEx = useRelsEx();
   const [merged, setMerged] = useState({merged: [], mergedCount: 0});
 
-  debugLog(`useMergedInventory : mergedCount=${merged.mergedCount}, mergePrints=${mergePrints}, mergePatterns=${mergePatterns}, mergeMolds=${mergeMolds}, mergeAlternates=${mergeAlternates}, mergeExtra=${mergeExtra}`, 2);
+  console.debug(`useMergedInventory : mergedCount=${merged.mergedCount}, mergePrints=${mergePrints}, mergePatterns=${mergePatterns}, mergeMolds=${mergeMolds}, mergeAlternates=${mergeAlternates}, mergeExtra=${mergeExtra}`);
 
   useEffect(() => {
     (async () => {
       const newMerged = await merge([mergePrints, mergePatterns, mergeMolds, mergeAlternates, mergeExtra, rels, relsEx]);
       setMerged(newMerged);
-      debugLog(`useMergedInventory > setMerged : mergedCount=${newMerged.mergedCount}, mergePrints=${mergePrints}, mergePatterns=${mergePatterns}, mergeMolds=${mergeMolds}, mergeAlternates=${mergeAlternates}, mergeExtra=${mergeExtra}`);
+      console.log(`useMergedInventory > setMerged : mergedCount=${newMerged.mergedCount}, mergePrints=${mergePrints}, mergePatterns=${mergePatterns}, mergeMolds=${mergeMolds}, mergeAlternates=${mergeAlternates}, mergeExtra=${mergeExtra}`);
     })();
   }, [mergePrints, mergePatterns, mergeMolds, mergeAlternates, mergeExtra, rels, relsEx]);
 

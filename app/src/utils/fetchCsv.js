@@ -12,7 +12,7 @@ export default async function fetchCsv(path) {
     return csv;
   }
   catch (e) {
-    console.log(`error fetching ${path}: ${e}`);
+    console.error(`error fetching ${path}: ${e}`);
     return null;
   }
 }

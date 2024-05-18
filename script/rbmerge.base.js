@@ -171,7 +171,7 @@ function resolve(part) {
 			return part;
 		}
 		if (found.has(resolved)) {
-			console.log(`${ME}: avoided circular reference involving parts ${part.refPartNum} and ${resolved}`);
+			console.warn(`${ME}: avoided circular reference involving parts ${part.refPartNum} and ${resolved}`);
 			return part;
 		}
 		found.add(resolved);

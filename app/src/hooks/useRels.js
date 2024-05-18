@@ -1,7 +1,6 @@
 //*
 
 import { useState } from 'react';
-import debugLog from '../utils/debugLog';
 import relsData from '../data/rels.json';
 import { key, Rel } from '../utils/rels';
 
@@ -13,14 +12,13 @@ export default function useRels() {
 /*/
 
 import { useEffect, useState } from 'react';
-import debugLog from '../utils/debugLog';
 import fetchCsv from '../utils/fetchCsv';
 import { key, Rel } from '../utils/rels';
 import csvPath from '../data/rbm_part_relationships.csv'
 
 export default function useRels() {
   const [rels, setRels] = useState(null);
-  debugLog(`useRels: rels.size=${rels?.size}`, 2);
+  console.debug(`useRels: rels.size=${rels?.size}`);
 
   useEffect(() => {
     (async () => {
@@ -48,11 +46,11 @@ function parseTable(csv) {
       rels.set(key(child, type), parent);
     }
     else {
-      console.log(`unexpected spec in rels: ${spec}`);
+      console.warn(`unexpected spec in rels: ${spec}`);
     }
   }
 
-  debugLog(`useRels > parseTable : rels.size=${rels.size}`);
+  console.log(`useRels > parseTable : rels.size=${rels.size}`);
 
   return rels;
 }

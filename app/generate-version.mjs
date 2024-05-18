@@ -7,7 +7,7 @@ const dir = path.dirname(fileURLToPath(import.meta.url));
 const ts = execSync(`git log -1 --format="%at" "${dir}" "${dir}/../tables/*.csv"`);
 const date = new Date(ts.toString() * 1000);
 const version = date.toISOString().replace('T', '.').replace(/:/g, '-').slice(0, -5);
-console.log(`Version generated: ${version}`);
+console.info(`Version generated: ${version}`);
 
 const publicFiles = fs.readdirSync(`${dir}/public`).filter(f => f != 'index.html').join(',');
 const publicRev = execSync(`git log -1 --format="%H" "${dir}/public"`);

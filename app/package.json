@@ -2,6 +2,8 @@
   "name": "rbmerge",
   "version": "1.0.0",
   "homepage": "/rbmerge/app/",
+  "author": "Mikalai Ananenka",
+  "license": "MIT",
   "private": true,
   "dependencies": {
     "bootstrap": "^5.3.3",

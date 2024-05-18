@@ -1,7 +1,8 @@
 // ==UserScript==
 // @name         RBmerge
 // @description  Merge part tables from Rebrickable.
-// @author       ojuuji
+// @author       Mikalai Ananenka
+// @license      MIT
 // @homepageURL  https://ojuuji.github.io/rbmerge/
 // @icon         https://ojuuji.github.io/rbmerge/app/logo.svg
 // @updateURL    https://ojuuji.github.io/rbmerge/js/rbmerge.meta.js

@@ -2,16 +2,11 @@
   padding: 0;
 }
 
-:not(pre) > code {
-  padding: 1px 2px;
-  border-radius: 3px;
-}
-
 a.inventory-partnum {
   text-decoration: none;
 }
 
-@media (min-width: 992px) {
+@media (min-width: 992px) { /* bootstrap 'lg' breakpoint */
   .inventory-refpartnum, .inventory-numparts  {
     width: 1%;
     min-width: 15ch;
@@ -22,4 +17,13 @@ a.inventory-partnum {
     width: 1%;
     min-width: 34ch;
   }
+}
+
+.inventory-refandnum, .inventory-refandnum-data {
+  min-width: 10ch;
+  max-width: 10ch;
+}
+
+.inventory-refandnum-data {
+  word-wrap: break-word;
 }

@@ -1,4 +1,5 @@
 import { Col, Row } from 'react-bootstrap';
+import { useMediaQuery } from 'react-responsive';
 import PartLink from './PartLink';
 
 function ColorsCell(group) {
@@ -66,10 +67,18 @@ export default function InventoryRow({group}) {
     total += ` in ${colorsUniq.size} colors`;
   }
 
+  const isNotXS = useMediaQuery({ query: '(min-width: 576px)' });  // bootstrap 'sm' breakpoint
+
   return (
     <tr key={refPartNum}>
-      <td><PartLink partNum={refPartNum}/></td>
-      <td>{total}</td>
+      {isNotXS ?
+        <>
+          <td><PartLink partNum={refPartNum}/></td>
+          <td>{total}</td>
+        </>
+      :
+        <td className='inventory-refandnum-data'><PartLink partNum={refPartNum}/><br/>{total}</td>
+      }
       <td>{ColorsCell(group)}</td>
       <td>{DescriptionCell(countPerPartNum, refPartNum)}</td>
     </tr>

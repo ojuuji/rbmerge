@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 import useRels from './useRels';
 import useRelsEx from './useRelsEx';
+import { useInventory } from '../contexts/InventoryProvider';
 import { useMergeOptions } from '../contexts/MergeOptionsProvider';
 import { compareColors } from '../utils/colors';
-import { getInventory } from '../utils/db';
 import { Rel, key } from '../utils/rels';
 
 function resolve(part, [mergePrints, mergePatterns, mergeMolds, mergeAlternates, mergeExtra, rels, relsEx]) {
@@ -53,8 +53,7 @@ function resolve(part, [mergePrints, mergePatterns, mergeMolds, mergeAlternates,
   }
 }
 
-async function merge(options) {
-  const inventory = await getInventory();
+function merge(inventory, options) {
   let map = new Map();
 
   for (const part of inventory) {
@@ -105,6 +104,7 @@ async function merge(options) {
 }
 
 export default function useMergedInventory() {
+  const {inventory} = useInventory();
   const {mergePrints, mergePatterns, mergeMolds, mergeAlternates, mergeExtra} = useMergeOptions();
   const rels = useRels();
   const relsEx = useRelsEx();
@@ -113,12 +113,10 @@ export default function useMergedInventory() {
   console.debug(`useMergedInventory : mergedCount=${merged.mergedCount}, mergePrints=${mergePrints}, mergePatterns=${mergePatterns}, mergeMolds=${mergeMolds}, mergeAlternates=${mergeAlternates}, mergeExtra=${mergeExtra}`);
 
   useEffect(() => {
-    (async () => {
-      const newMerged = await merge([mergePrints, mergePatterns, mergeMolds, mergeAlternates, mergeExtra, rels, relsEx]);
-      setMerged(newMerged);
-      console.log(`useMergedInventory > setMerged : mergedCount=${newMerged.mergedCount}, mergePrints=${mergePrints}, mergePatterns=${mergePatterns}, mergeMolds=${mergeMolds}, mergeAlternates=${mergeAlternates}, mergeExtra=${mergeExtra}`);
-    })();
-  }, [mergePrints, mergePatterns, mergeMolds, mergeAlternates, mergeExtra, rels, relsEx]);
+    const newMerged = merge(inventory, [mergePrints, mergePatterns, mergeMolds, mergeAlternates, mergeExtra, rels, relsEx]);
+    setMerged(newMerged);
+    console.log(`useMergedInventory > setMerged : mergedCount=${newMerged.mergedCount}, mergePrints=${mergePrints}, mergePatterns=${mergePatterns}, mergeMolds=${mergeMolds}, mergeAlternates=${mergeAlternates}, mergeExtra=${mergeExtra}`);
+  }, [inventory, mergePrints, mergePatterns, mergeMolds, mergeAlternates, mergeExtra, rels, relsEx]);
 
   return merged;
 }

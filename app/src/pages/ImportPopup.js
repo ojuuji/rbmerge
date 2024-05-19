@@ -1,10 +1,11 @@
 import { useRef, useState } from 'react';
 import { Alert, Button, Form, Stack } from 'react-bootstrap';
 import Popup from '../components/Popup';
-import { setInventory } from '../utils/db';
+import { useInventory } from '../contexts/InventoryProvider';
 import importInventory from '../utils/importInventory';
 
 export default function ImportPopup({show, handleClose}) {
+  const {setInventory} = useInventory();
   const [finished, setFinished] = useState(false);
   const [finishedOk, setFinishedOk] = useState();
   const [finishedMessage, setFinishedMessage] = useState();

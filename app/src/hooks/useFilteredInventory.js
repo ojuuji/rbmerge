@@ -80,7 +80,7 @@ function applyFilter(isName, source, filter, filterSmart, filterGroups) {
 export default function useFilteredInventory() {
   const {filterSmart, filterGroups, colorFilter, nameFilter} = useFilterOptions();
   const merged = useMergedInventory();
-  const [filtered, setFiltered] = useState({...merged, filtered: [], filteredCount: 0});
+  const [filtered, setFiltered] = useState(() => ({...merged, filtered: [], filteredCount: 0}));
 
   console.debug(`useFilteredInventory : filteredCount=${filtered.filteredCount}, filterSmart=${filterSmart} filterGroups=${filterGroups} colorFilter="${colorFilter}" nameFilter="${nameFilter}"`);
 

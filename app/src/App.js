@@ -3,6 +3,7 @@ import Container from 'react-bootstrap/Container';
 import Header from './components/Header';
 import DarkModeProvider from './contexts/DarkModeProvider';
 import FilterOptionsProvider from './contexts/FilterOptionsProvider';
+import InventoryProvider from './contexts/InventoryProvider';
 import MergeOptionsProvider from './contexts/MergeOptionsProvider';
 import TableOptionsProvider from './contexts/TableOptionsProvider';
 import ImportPopup from './pages/ImportPopup';
@@ -26,15 +27,17 @@ export default function App() {
     <Container fluid className='App'>
       <DarkModeProvider>
         <TableOptionsProvider>
-          <MergeOptionsProvider>
-            <FilterOptionsProvider>
-              <Header toggleShowImport={toggleShowImport} toggleShowOptions={toggleShowOptions} toggleShowAbout={toggleShowAbout} />
-              <ImportPopup show={showImport} handleClose={toggleShowImport} />
-              <OptionsPopup show={showOptions} handleClose={toggleShowOptions} />
-              <AboutPopup show={showAbout} handleClose={toggleShowAbout} />
-              <InventoryPage />
-            </FilterOptionsProvider>
-          </MergeOptionsProvider>
+          <InventoryProvider>
+            <MergeOptionsProvider>
+              <FilterOptionsProvider>
+                <Header toggleShowImport={toggleShowImport} toggleShowOptions={toggleShowOptions} toggleShowAbout={toggleShowAbout} />
+                <ImportPopup show={showImport} handleClose={toggleShowImport} />
+                <OptionsPopup show={showOptions} handleClose={toggleShowOptions} />
+                <AboutPopup show={showAbout} handleClose={toggleShowAbout} />
+                <InventoryPage />
+              </FilterOptionsProvider>
+            </MergeOptionsProvider>
+          </InventoryProvider>
         </TableOptionsProvider>
       </DarkModeProvider>
     </Container>

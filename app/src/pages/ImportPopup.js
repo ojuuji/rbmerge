@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import { Alert, Button, Form, Stack } from 'react-bootstrap';
 import Popup from '../components/Popup';
 import { useInventory } from '../contexts/InventoryProvider';
@@ -6,54 +6,51 @@ import importInventory from '../utils/importInventory';
 
 export default function ImportPopup({show, handleClose}) {
   const {setInventory} = useInventory();
-  const [finished, setFinished] = useState(false);
-  const [finishedOk, setFinishedOk] = useState();
-  const [finishedMessage, setFinishedMessage] = useState();
+  const [state, setState] = useState();
 
   const handleCloseAndFinish = () => {
-    setFinished(false);
+    setState();
     handleClose();
   };
 
-  const fileField = useRef();
+  const handleChange = event => {
+    setState({file: event.currentTarget.files[0]});
+  };
 
   const onSubmit = async event => {
     event.preventDefault();
 
+    let success = true;
+    let message = "Inventory has been imported successfully.";
+
     try {
-      const [file] = fileField.current.files;
-      if (!file) {
-        throw new Error("no file selected");
-      }
-      if (file.size > 50 << 20) {
+      if (state.file.size > 50 << 20) {
         throw Error("50MB file size limit exceeded");
       }
-      const data = await file.text();
+      const data = await state.file.text();
       const inventory = await importInventory(data);
       setInventory(inventory);
-
-      event.target.reset();
-      setFinishedOk(true);
-      setFinishedMessage("Inventory has been imported successfully.");
     }
     catch (e) {
-      setFinishedOk(false);
-      setFinishedMessage("Error: " + e.message);
+      success = false;
+      message = "Error: " + e.message;
     }
-    setFinished(true);
+
+    setState({finished: true, success, message, file: null});
+    event.target.reset();
   };
 
   return (
     <Popup title="Import" size='lg' show={show} handleClose={handleCloseAndFinish}>
-      {finished && <Alert variant={finishedOk ? 'success' : 'danger'}>
-        {finishedMessage}
+      {state?.finished && <Alert variant={state.success ? 'success' : 'danger'}>
+        {state.message}
       </Alert>}
       <Form onSubmit={onSubmit}>
         <Form.Group controlId='formFile'>
           <Form.Label >Select inventory HTML table</Form.Label>
           <Stack direction='horizontal' gap={1}>
-            <Form.Control type='file' ref={fileField} />
-            <Button variant='primary' type='submit'>Import</Button>
+            <Form.Control type='file' onChange={handleChange} />
+            <Button variant='primary' type='submit' disabled={!state?.file}>Import</Button>
           </Stack>
         </Form.Group>
       </Form>

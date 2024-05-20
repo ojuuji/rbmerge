@@ -13,7 +13,7 @@ export default function InventoryPage() {
 
   const totalPages = parts.filtered.length && tablePartsPerPage ? Math.floor((parts.filtered.length - 1) / tablePartsPerPage + 1) : 0;
   const pageNumActual = totalPages && pageNum > totalPages ? totalPages : pageNum;
-  const partsView = totalPages ? parts.filtered.slice(tablePartsPerPage * (pageNum - 1), tablePartsPerPage * pageNum) : parts.filtered;
+  const partsView = totalPages > 1 ? parts.filtered.slice(tablePartsPerPage * (pageNum - 1), tablePartsPerPage * pageNum) : parts.filtered;
 
   return (
     <>
@@ -23,7 +23,7 @@ export default function InventoryPage() {
           {partsView.map(group => <InventoryRow key={group[0].refPartNum} group={group} />)}
         </tbody>
       </Table>
-      {totalPages ? <InventoryPagination pageNum={pageNumActual} setPageNum={setPageNum} totalPages={totalPages} /> : <></>}
+      {totalPages > 1 ? <InventoryPagination pageNum={pageNumActual} setPageNum={setPageNum} totalPages={totalPages} /> : <></>}
     </>
   );
 }

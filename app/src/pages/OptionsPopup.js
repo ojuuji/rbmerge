@@ -20,6 +20,18 @@ export default function OptionsPopup(props) {
         <fieldset>
           <legend>Table</legend>
           <OptionCheckbox label="Sticky header" checked={options.tableStickyHeader} onChange={options.setTableStickyHeader} />
+          <Form.Group as={Row} controlId='ppp'>
+            <Form.Label column>Parts per page:</Form.Label>
+            <Col>
+              <Form.Select onChange={e => options.setTablePartsPerPage(parseInt(e.target.value))}>
+                {[10, 25, 50, 100, 250, 500, 0].map(ppp => (
+                  <option key={ppp} selected={ppp === options.tablePartsPerPage} value={ppp}>
+                    {ppp ? ppp : "All"}
+                  </option>
+                ))}
+              </Form.Select>
+            </Col>
+          </Form.Group>
         </fieldset>
       </Form>
       <Form className='mb-4'>

@@ -2,18 +2,20 @@ import { useMediaQuery } from 'react-responsive';
 import FilterTableHeader from '../components/FilterTableHeader';
 import { useFilterOptions } from '../contexts/FilterOptionsProvider';
 import { useTableOptions } from '../contexts/TableOptionsProvider';
+import useFilteredInventory from '../hooks/useFilteredInventory';
 
 function formatCount(filtered, merged) {
   return filtered !== merged ? `${filtered}/\u200B${merged}` : `${merged}`;
 }
 
-export default function InventoryHead({parts}) {
+export default function InventoryHead() {
+  const parts = useFilteredInventory();
   const isNotXS = useMediaQuery({ query: '(min-width: 576px)' });  // bootstrap 'sm' breakpoint
   const {colorFilter, setColorFilter, nameFilter, setNameFilter} = useFilterOptions();
   const {tableStickyHeader} = useTableOptions();
 
   return (
-    <thead className={tableStickyHeader ? 'position-sticky top-0' : null}>
+    <thead className={tableStickyHeader ? 'sticky-top' : null}>
       <tr>
         {isNotXS ?
           <>

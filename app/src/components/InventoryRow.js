@@ -14,7 +14,7 @@ function ColorsCell(group) {
         {addSeparator && <hr className='m-0' />}
 
         <Row className='align-items-center'>
-          <Col lg='auto' xl='auto' xxl='auto'>
+          <Col xs='auto'>
             <img loading='lazy' alt="" src={part.img} width='85' height='85' />
           </Col>
           <Col>

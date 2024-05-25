@@ -6,13 +6,19 @@ a.inventory-partnum {
   text-decoration: none;
 }
 
-@media (min-width: 992px) { /* bootstrap 'lg' breakpoint */
+@media (min-width: 768px) { /* bootstrap 'md' breakpoint */
   .inventory-refpartnum, .inventory-numparts  {
     width: 1%;
-    min-width: 15ch;
+    min-width: 13ch;
     white-space: nowrap;
   }
 
+  .inventory-colors {
+    width: 32%;
+  }
+}
+
+@media (min-width: 992px) { /* bootstrap 'lg' breakpoint */
   .inventory-colors {
     width: 1%;
     min-width: 34ch;

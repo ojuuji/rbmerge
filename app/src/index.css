@@ -27,3 +27,9 @@ a.inventory-partnum {
 .inventory-refandnum-data {
   word-wrap: break-word;
 }
+
+/* fixes menu being behind sticky table header:
+ https://github.com/twbs/bootstrap/issues/31747 */
+.dropdown-menu {
+  z-index: 1100;
+}

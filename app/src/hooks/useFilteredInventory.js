@@ -3,15 +3,15 @@ import { useFilterOptions } from '../contexts/FilterOptionsProvider';
 import useMergedInventory from './useMergedInventory';
 
 function match(text, filter, filterSmart) {
-	if (filterSmart) {
-		const pattern = /^\d+$/.test(filter) ? new RegExp(`\\b${filter}\\b`) : filter;
-		const newText = text.replace(pattern, '');
-		return [newText.length !== text.length, newText];
-	}
-	else {
-		const matched = text.includes(filter);
-		return [matched, text];
-	}
+  if (filterSmart) {
+    const pattern = /^\d+$/.test(filter) ? new RegExp(`\\b${filter}\\b`) : filter;
+    const newText = text.replace(pattern, '');
+    return [newText.length !== text.length, newText];
+  }
+  else {
+    const matched = text.includes(filter);
+    return [matched, text];
+  }
 }
 
 function applyGroupsFilter(isName, source, filter, filterSmart) {
@@ -94,12 +94,12 @@ export default function useFilteredInventory() {
     }
     else {
       let [filteredColor, filteredColorCount] = colorWords.length === 0
-        ? [parts.merged, parts.mergedCount]
-        : applyFilter(false, parts.merged, colorWords, filterSmart, filterGroups);
+      ? [parts.merged, parts.mergedCount]
+      : applyFilter(false, parts.merged, colorWords, filterSmart, filterGroups);
 
       [parts.filtered, parts.filteredCount] = nameWords.length === 0
-        ? [filteredColor, filteredColorCount]
-        : applyFilter(true, filteredColor, nameWords, filterSmart, filterGroups);
+      ? [filteredColor, filteredColorCount]
+      : applyFilter(true, filteredColor, nameWords, filterSmart, filterGroups);
     }
 
     setFiltered(parts);

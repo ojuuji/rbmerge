@@ -1,18 +1,24 @@
 
-- [colors.csv](#colorscsv)
-- [parts.csv](#partscsv)
-- [part_relationships.csv](#part_relationshipscsv)
-  - [`A` - Alternate](#a---alternate)
-  - [`B` - Sub-Part](#b---sub-part)
-  - [`M` - Mold](#m---mold)
-  - [`P` - Print](#p---print)
-  - [`R` - Pair](#r---pair)
-  - [`T` - Pattern](#t---pattern)
-- [part_relationships_ex.csv](#part_relationships_excsv)
+- [Rebrickable Tables](#rebrickable-tables)
+  - [colors.csv](#colorscsv)
+  - [parts.csv](#partscsv)
+  - [part_relationships.csv](#part_relationshipscsv)
+    - [`A` - Alternate](#a---alternate)
+    - [`B` - Sub-Part](#b---sub-part)
+    - [`M` - Mold](#m---mold)
+    - [`P` - Print](#p---print)
+    - [`R` - Pair](#r---pair)
+    - [`T` - Pattern](#t---pattern)
+- [RBmerge Tables](#rbmerge-tables)
+  - [rmb_colors.csv](#rmb_colorscsv)
+  - [rbm_part_relationships.csv](#rbm_part_relationshipscsv)
+  - [part_relationships_ex.csv](#part_relationships_excsv)
 
-All CSV files except `part_relationships_ex.csv` are downloaded from [https://rebrickable.com/downloads/](https://rebrickable.com/downloads/).
+Merging relies on tables from [Rebrickable Downloads](https://rebrickable.com/downloads/). Initially were used original tables, but now they are preprocessed for the merging needs. Original tables are described in [Rebrickable Tables](#rebrickable-tables) section. Preprocessed tables - in [RBmerge Tables](#rbmerge-tables) section.
 
-# colors.csv
+# Rebrickable Tables
+
+## colors.csv
 
 This file contains table with the following four columns:
 
@@ -26,7 +32,7 @@ id,name,rgb,is_trans
 
 `rgb` is RGB color in a form of [HEX triplet](https://en.wikipedia.org/wiki/Web_colors#Hex_triplet), 6 digits, no prefix.
 
-`is_trans` is a flag indicating if color is transparent. Possible values are `t` (for transparent colors) and `f`.
+`is_trans` is a flag indicating if color is transparent. Possible values: `t` for transparent colors and `f` otherwise.
 
 Examples:
 
@@ -35,7 +41,7 @@ Examples:
 272,Dark Blue,0A3463,f
 ```
 
-# parts.csv
+## parts.csv
 
 This file contains table with the following four columns:
 
@@ -45,9 +51,9 @@ part_num,name,part_cat_id,part_material
 
 `name` is the part name on Rebrickable.
 
-`part_cat_id` external reference (foreign key) to `id` in `part_categories.csv`.
+`part_cat_id` is an external reference (foreign key) to `id` in `part_categories.csv` table.
 
-`part_material` is the material from which the part is made. Possible options:
+`part_material` is the material from which this part is made. Possible options:
 
 ```
 Cardboard/Paper
@@ -59,7 +65,7 @@ Plastic
 Rubber
 ```
 
-# part_relationships.csv
+## part_relationships.csv
 
 This file contains table with the following three columns:
 
@@ -69,7 +75,7 @@ rel_type,child_part_num,parent_part_num
 
 Relation type is one of `ABMPRT`. They all are described below.
 
-## `A` - Alternate
+### `A` - Alternate
 
 ```
 A,11954,62531
@@ -81,7 +87,7 @@ Rebrickable uses this relation in the build matching option _"Consider alternate
 
 There will be no corresponding row `A,62531,11954` so this relation should be considered bidirectional.
 
-## `B` - Sub-Part
+### `B` - Sub-Part
 
 ```
 B,6051,6051c04
@@ -89,7 +95,7 @@ B,6051,6051c04
 
 [6051](https://rebrickable.com/parts/6051/) is a sub-part of [6051c04](https://rebrickable.com/parts/6051c04/).
 
-## `M` - Mold
+### `M` - Mold
 
 ```
 M,92950,3455
@@ -115,14 +121,14 @@ M,67695,32174
 
 But there are no row `M,93571,67695`. For the info, `67695` is the latest mold.
 
-Moreover, alternative not necessarily points to the latest mold, and it may have molds too:
+Moreover, alternates not necessarily point to the latest molds, and they may have molds too (as mentioned above, 32174 is an older mold of 67695):
 
 ```
 A,60176,32174
 M,89652,60176
 ```
 
-## `P` - Print
+### `P` - Print
 
 ```
 P,4740pr0014,4740
@@ -132,7 +138,7 @@ P,4740pr0014,4740
 
 Rebrickable uses this relation along with relation `T` in the build matching option _"Ignore printed and patterned part differences."_
 
-## `R` - Pair
+### `R` - Pair
 
 ```
 R,18947,35188
@@ -142,7 +148,7 @@ R,18947,35188
 
 There will be no corresponding row `R,35188,18947` so this relation should be considered bidirectional.
 
-## `T` - Pattern
+### `T` - Pattern
 
 ```
 T,19858pat0002,19858
@@ -152,28 +158,69 @@ T,19858pat0002,19858
 
 Rebrickable uses this relation along with relation `P` in the build matching option _"Ignore printed and patterned part differences."_
 
-# part_relationships_ex.csv
+# RBmerge Tables
+
+These tables are built periodically by [`update.py`](./update.py) script and committed here.
+
+## rbm_colors.csv
+
+This table contains only one column - the color name. The key point here is how colors are ordered in it.
+
+This table is used to sort parts with the same part number but different colors. They will be ordered the same way as their colors in this table.
+
+Colors are ordered the following way:
+1. `[Unknown]`
+2. `[No Color/Any Color]`
+3. `White`
+4. `Black`
+5. Grayscale colors from darker to lighter
+6. Remaining colors ordered by [hue](https://en.wikipedia.org/wiki/Hue)
+
+This order of the colors tries to mimic the one in "Your Colors" section on the part pages on Rebrickable.
+
+## rbm_part_relationships.csv
+
+This file contains table with the following three columns:
+
+```
+rel_type,child_part_num,parent_part_num
+```
+
+It is a processed [`part_relationships.csv`](#part_relationshipscsv) table, with the following modifications applied:
+- retain ony relationships used by RBmerge: [`A`](#a---alternate), [`M`](#m---mold), [`P`](#p---print), [`T`](#t---pattern)
+- in case of molds resolve all issues (in context of merging) of original table (read details in [`M` - Mold](#m---mold) section):
+  - always list the successor part as `parent_part_num`
+  - use the final successor part for all molds, i.e. if there are molds A→B and A→C, and the final successor is C, table will have A→C and B→C
+  - as a successor use the part which either has greater end year, or greater start year, or the part that is referenced in more sets
+- in case of alternates:
+  - first resolve molds for both `child_part_num` and `parent_part_num`
+  - as `parent_part_num` use part which either has greater end year, or the part that is referenced in more sets.
+
+This way to resolve any relationship it is enough to perform single lookup in this table. I.e. for any relationship `X` and part `Y` there will be either zero or one row `X,Y,Z` and no rows starting with `X,Z,`.
+
+## part_relationships_ex.csv
 
 This table defines extra relationships, not available on Rebrickable and maintained within RBmerge.
 
-As in `part_relationships.csv` it contains three columns:
+Empty lines and lines starting with `#` character are ignored (the latter is used for comments). So this is not really a CSV table, but the same file extension is kept to simplify maintenance.
+
+Each data line there describes relationship similar to [`part_relationships.csv`](#part_relationshipscsv) but uses extended format:
 
 ```
-rel_type,child_part_num_regex,parent_part_num_repl
+<rel_type><sep><child_part_num_regex><sep><parent_part_num_repl>
 ```
+where `<sep>` is any character not appearing elsewhere on the line.
 
-This is where the similarities end. This file allows comments, staring with `#`, and blank lines. Any other line is expected to have relation i.e. there is no table header. So this is not really a CSV table.
+`<rel_type>` represents relation type the same way as in `part_relationships.csv`.
 
-First column represents relation type and has the same meaning as in `part_relationships.csv`. As a second column here can be used not only a part number but also a regular expression. This allows to apply relationship to multiple part numbers using a single row.
+In `<child_part_num_regex>` can be used not only a part number but also a regular expression. This allows to apply relationship to multiple part numbers using a single spec.
 
 Relationship is applied only if regex matches an entire part number. Wrapping with `^` and `$` is not necessary and is always implied.
 
-Third column is a replacement, which can be either a part number or a string containing back references. For the first capture group back reference will be `$1` and so on.
+`<parent_part_num_repl>` is a replacement, which can be either a part number or a string containing back references. For the first capture group back reference will be `$1` and so on.
 
-For example:
+For example, with the following spec part [35074pr0003](https://rebrickable.com/parts/35074pr0003/) will be resolved as a print of part `35074`:
 
 ```
-P,(.+)pr\d+[a-z]*,$1
+P,(.+)pr\d+,$1
 ```
-
-Part [35074pr0003](https://rebrickable.com/parts/35074pr0003/) will be resolved as a print of `35074`, which does not really exist (and thus is not available on Rebrickable), but in context of the parts merging this is fine.

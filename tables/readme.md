@@ -10,7 +10,7 @@
     - [`R` - Pair](#r---pair)
     - [`T` - Pattern](#t---pattern)
 - [RBmerge Tables](#rbmerge-tables)
-  - [rmb_colors.csv](#rmb_colorscsv)
+  - [rbm_colors.csv](#rbm_colorscsv)
   - [rbm_part_relationships.csv](#rbm_part_relationshipscsv)
   - [part_relationships_ex.csv](#part_relationships_excsv)
 
@@ -174,7 +174,7 @@ Colors are ordered the following way:
 3. `White`
 4. `Black`
 5. Grayscale colors from darker to lighter
-6. Remaining colors ordered by [hue](https://en.wikipedia.org/wiki/Hue)
+6. Remaining colors, ordered by [hue](https://en.wikipedia.org/wiki/Hue)
 
 This order of the colors tries to mimic the one in "Your Colors" section on the part pages on Rebrickable.
 

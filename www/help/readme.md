@@ -7,11 +7,13 @@
   - [Column #3: Colors](#column-3-colors)
   - [Column #4: Description](#column-4-description)
 - [Merging Parts](#merging-parts)
+  - [Merge Options](#merge-options)
 - [Filtering Parts](#filtering-parts)
+  - [Filter Options](#filter-options)
 
 ## Table Structure
 
-Each row contains single and unique reference part number and group of actual parts from the inventory, which resolve to this reference part.
+Each row contains single and unique reference part number and a group of actual parts from the inventory, which resolve to this reference part.
 
 All part numbers everywhere in the table are hyperlinks to corresponding parts on Rebrickable.
 
@@ -19,31 +21,51 @@ All part numbers everywhere in the table are hyperlinks to corresponding parts o
 
 Table consists of four columns:
 
-1. **Reference Part Number**. As header is used total number of the reference parts (total number of rows) in the table.
-2. **Number of Parts**. As header is used total number of parts at all.
+1. **Reference Part Number**. As a header is used total number of the reference parts (total number of rows) in the table.
+2. **Number of Parts** in the group. As a header is used total number of parts in whole inventory.
 3. **`Colors`**. Header is an edit box which acts as a filter for the color names.
 4. **`Description`**. Header is an edit box which acts as a filter for the part names.
 
 Example:
-![Example of the table header](../images/table_header.png)
-
-If everything went well, then the number of parts should actually be equal to the one on Rebrickable page `All My Parts`:
-
-![Parts count on Rebrickable](../images/parts_count_on_rb.png)
+![Example of the table header](../images/example_table_header.png)
 
 ### Column #1: Reference Part Number
 
 Each row contains single and unique reference part number. They are unique because colors are always merged regardless of the merge options.
 
-Process of resolving to the reference part does not depend on the inventory, so the reference part may not even exist in the inventory. In fact, it may not even exist at all.
+Process of resolving the reference part does not depend on the inventory, so the reference part may not even exist in it.
+
+In fact, it may not even exist at all. This is common situation for prints and patterns. For example, [35074pr0003](https://rebrickable.com/parts/35074pr0003/) and [35074pr0009](https://rebrickable.com/parts/35074pr0009/) both are prints of the same part but unprinted part `35074` does not exist.
+
+In such cases, even if the reference part does not exist, nothing actually prevents from using it for the parts merging anyway.
 
 ### Column #2: Number of Parts
 
+Each row represents group of parts with the same reference part. This column contains number of parts in this group.
+
+When there are more than one color in the group, number of colors is appended to the number of parts. For example, "5 in 2 colors". Only unique colors count. For example, molds with the same color will not increase this number. So it may be less than the number of parts listed in `Colors` column.
+
+For example, the following group has five combinations of the partnum+color in the `Colors` column, but there are only three unique colors:
+
+![Example when number of unique colors is less than total number of colors](../images/example_uniq_colors_lt_total.png)
+
 ### Column #3: Colors
 
-Each row contains images and color names for all parts in the group. 
+Each row contains images and color names for all parts in the group.
+
+Each part number and color is listed there separately and includes its image and number of parts in this color.
+
+Parts are grouped by the part number and relation type. So, for example, on the screenshot above first are listed all colors of part `61408` and then all colors of part `33299b`.
+
+Parts with the same part number are sorted by the color (technical details can be found in [`rbm_colors.csv`](https://github.com/ojuuji/rbmerge/blob/master/tables/readme.md#rbm_colorscsv) topic from the main repository). So the parts order is consistent across all parts in the inventory.
 
 ### Column #4: Description
+
+For each part in the group this column contains name of the part and the number of these parts in the inventory.
+
+If there are more than one part number in the group, or if the part number differs from the reference part number in first column, then it also includes part number in the square brackets (see screenshot in `Column #2` above for example).
+
+In case of multiple part numbers they are listed in the same order as in `Column #3`.
 
 ## Merging Parts
 
@@ -53,8 +75,32 @@ Part is resolved to the reference part if it meets any of these criteria:
 - it has different color but the same part number as the reference part
 - (depending on the merge options) it is print, pattern, mold, or alternate of the reference part
 
-Which one becomes the reference part in case of molds and alternates is decided basing on the part usage in the sets and the years when it was used. Basically it will be either a part with the most recent year or, if there are multiple parts with the same year, the one that is referenced in more sets.
+Which one becomes the reference part in case of molds and alternates is decided basing on the part usage in the sets and the years when it was used. Basically it will be either a part with the most recent year or, if there are multiple parts with the same year, the one that is referenced in more sets (technical details can be found in [`rbm_part_relationships.csv`](https://github.com/ojuuji/rbmerge/blob/master/tables/readme.md#rbm_part_relationshipscsv) topic from the main repository).
+
+### Merge Options
+
+TODO
 
 ## Filtering Parts
 
-Rows in the table can be filtered by color names and by part names.
+Rows in the table can be filtered by the color names and by the part names, separately. The filter edit boxes are combined with corresponding column headers.
+
+Filtering only considers color and part names. Other text, found in these columns, i.e. numbers of parts and the part numbers, is ignored by the filters.
+
+Filtering is case-insensitive.
+
+### Filter Options
+
+Every word from the filter is matched separately. Text (i.e. the color name or the part name) is considered as matched if it contains all words from the filter.
+
+Option `Use smart matching`, which is enabled by default, applies two additional constraints to this:
+1. it forbids reuse of already matched text when matching next word
+2. if a filter word is a number, it must match an entire word from the text.
+
+Suppose you entered part name filter "1 x 1". Without this option filtered results would have part containing at least one "1" anywhere, e.g. `Axle Hose, Soft 12L` or `Plate 2 x 14`. However, with this option a part name will match only if it contains two whole words "1":
+
+|Example of "1 x 1" filter with smart matching|Example of "1 x 1" filter without smart matching|
+|---|---|
+|[![Example of "1 x 1" filter with smart matching](../images/example_filter_1_x_1_smart_on.png)](../images/example_filter_1_x_1_smart_on.png)|[![Example of "1 x 1" filter without smart matching](../images/example_filter_1_x_1_smart_off.png)](../images/example_filter_1_x_1_smart_off.png)|
+
+By default only parts, which matched filters, are retained in the table. By setting option `Apply to groups instead of individual parts` this behavior can be changed to leave whole part groups to which the matched parts belong. In other words, leave entire rows intact if they contain matched parts.

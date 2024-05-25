@@ -19,4 +19,4 @@ npm start
 
 These steps are automated via GitHub Actions, so you may check [workflows](.github/workflows) directory for details.
 
-Documentation can be found on the site: https://ojuuji.github.io/rbmerge/
+Documentation can be found on GitHub Pages: https://ojuuji.github.io/rbmerge/

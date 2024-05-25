@@ -10,7 +10,7 @@ Suppose you are prototyping something and you want to know how many Technic conn
 
 But you just want to know how many such connectors you have, regardless of their colors or molds, which you may not even know they exist.
 
-This is where RBmerge may be handy. Given a table with all your parts as an input, it transforms table by merging together all the same parts, which have just different colors. Then, basing on your preference, it also merges prints, patters, molds, and alternates.
+This is where RBmerge may be handy. Given a table with all your parts as an input, it transforms table by merging together all the same parts, which have just different colors. Then, basing on your preferences, it also merges prints, patterns, molds, and alternates.
 
 This is how the row for part 42195, mentioned above, may look before and after merging table by RBmerge:
 
@@ -20,4 +20,4 @@ This is how the row for part 42195, mentioned above, may look before and after m
 
 In the merged table all part variants are listed together while still retaining info about variations. For example, you still can check how many colors are there, or how many molds and parts per mold. Detailed description of the table structure can be found in the [Help → Table Structure](help/#table-structure) topic.
 
-To resolve mold variants, prints, patters, and alternate parts RBmerge uses parts relationships from [Rebrickable Downloads](https://rebrickable.com/downloads/).
+To resolve mold variants, prints, patterns, and alternate parts RBmerge uses parts relationships from [Rebrickable Downloads](https://rebrickable.com/downloads/).

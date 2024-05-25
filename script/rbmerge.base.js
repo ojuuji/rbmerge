@@ -70,9 +70,9 @@ const REL_MOLD    = 'M';
 const REL_PRINT   = 'P';
 const REL_PATTERN = 'T';
 
-let colors_ = new Map();
-let rels_ = new Map();
-let relsEx_ = new Map([[REL_ALT, []], [REL_MOLD, []], [REL_PRINT, []], [REL_PATTERN, []]]);
+const rels_ = new Map();
+const relsEx_ = new Map([[REL_ALT, []], [REL_MOLD, []], [REL_PRINT, []], [REL_PATTERN, []]]);
+const colors_ = [];
 
 async function init() {
   const relsData = "";    // <-- CAUTION! These lines are replaced
@@ -82,19 +82,19 @@ async function init() {
   // <rel_type>,<child_part_num>,<parent_part_num>\n...
   const relSpecs = (await decompress(relsData)).trim().split('\n');
   for (const spec of relSpecs) {
-    let [type, child, parent] = spec.split(',')
+    const [type, child, parent] = spec.split(',');
     rels_.set(key(child, type), parent);
   }
 
-  // <rel_type>,<child_part_num_regex>,<parent_part_num>\n...
+  // <rel_type><sep><child_part_num_regex><sep><parent_part_num>\n...
   const relExSpecs = (await decompress(relsExData)).trim().split('\n');
   for (const spec of relExSpecs) {
-    let [type, child, parent] = spec.split(',')
+    const [type, child, parent] = spec.split(spec[1]);
     relsEx_.get(type).push({regex: new RegExp(`^${child}$`), partNum: parent});
   }
 
   // already sorted colors in form <name>\n...
-  colors_ = (await decompress(colorsData)).trim().split('\n');
+  colors_.push(...(await decompress(colorsData)).trim().split('\n'));
 }
 
 function setup() {
@@ -104,7 +104,7 @@ function setup() {
   }
 }
 
-let inventory_ = [];
+const inventory_ = [];
 
 function parse() {
   let table = "";

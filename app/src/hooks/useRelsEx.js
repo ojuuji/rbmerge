@@ -39,19 +39,22 @@ const annotate = r => `A=${r?.get(Rel.Alt).length}, M=${r?.get(Rel.Mold).length}
 
 function parseTable(data) {
   const specs = data.trim().split('\n');
-  const specRegex = new RegExp(`^${Rel.RE},[^,]+,[^,]+$`);
+  const relsRegex = new RegExp(Rel.RE);
   const relsEx = new Map([
     [Rel.Alt, []], [Rel.Mold, []], [Rel.Print, []], [Rel.Pattern, []]
   ]);
 
   for (const spec of specs) {
-    if (specRegex.test(spec)) {
-      let [type, child, parent] = spec.split(',')
-      relsEx.get(type).push({regex: new RegExp(`^${child}$`), partNum: parent});
+    if (spec.length > 2 && relsRegex.test(spec[0])) {
+      const items = spec.split(spec[1]);
+      if (items.length === 3) {
+        const [type, child, parent] = items;
+        relsEx.get(type).push({regex: new RegExp(`^${child}$`), partNum: parent});
+
+        continue;
+      }
     }
-    else {
-      console.warn(`unexpected spec in relsEx: ${spec}`);
-    }
+    console.warn(`unexpected spec in relsEx: ${spec}`);
   }
 
   console.log(`useRelsEx > parseTable : ${annotate(relsEx)}`);

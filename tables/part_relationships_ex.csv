@@ -1,5 +1,6 @@
 # Format:
-# rel_type,child_part_num_regex,parent_part_num_repl
+# <rel_type><sep><child_part_num_regex><sep><parent_part_num_repl>
+# where <sep> is any character not appearing elsewhere on the line
 
 # General rule for prints, degradation covered by integrity_check.sh
 P,(.+)pr\d+[a-z]*,$1

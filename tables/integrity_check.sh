@@ -39,15 +39,26 @@ CheckMinifigs()
 	diff <(grep -Po '^97[03][a-z]' "${SQLDIR}/tables/parts.csv" | sort -u) <(Expectation minifigs)
 }
 
+CheckRelsEx()
+{
+	echo ":: checking extra relationships ..."
+
+	while read line; do
+		sep="\\${line:1:1}"
+		grep -Pqx "[^$sep]$sep[^$sep]+$sep[^$sep]+" <<<"$line" || Die "invalid spec: $line"
+	done < <(grep -vPx '#.*|\s*' "${WORKDIR}/part_relationships_ex.csv")
+}
+
 ME_FULLPATH="$(readlink -f "$BASH_SOURCE")"
 ME="$(basename "$ME_FULLPATH")"
 WORKDIR="$(dirname "$ME_FULLPATH")"
 SQLDIR="${WORKDIR}/../sqlite"
 
-export LC_ALL=C
+export LC_ALL=C.UTF8
 
 CheckPrints
 CheckPatterns
 CheckMinifigs
+CheckRelsEx
 
 echo ":: done"

@@ -14,6 +14,6 @@ Here is an example how the part 42195, mentioned above, may look in the table be
 |---|---|
 |[![Example of part 42195 in original table](images/example_part_42195_original.png)](images/example_part_42195_original.png)|[![Example of part 42195 in merged table](images/example_part_42195_merged.png)](images/example_part_42195_merged.png)|
 
-In the merged table all part variants are listed together while still retaining info about variations. For example, you still can check how many colors are there, or how many molds and parts per mold. Detailed description of the table structure can be found in the [Help → Table Structure](help/#table-structure) topic.
+In the merged table all part variants are listed together while still retaining info about variations. For example, you still can check how many colors are there, or how many molds and parts per mold.
 
-RBmerge comes in two flavors: [Web Application](/app/) and [User Script](/script/).
+RBmerge comes in two flavors: [Web Application](app/) and [User Script](script/). In the app you import inventory and use it within the app. Script has to be injected into HTML table from Rebrickable, either using [userscript manager](https://en.wikipedia.org/wiki/Userscript_manager) or manually.

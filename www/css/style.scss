@@ -110,8 +110,8 @@ h1 + ul {
   font-size: 0.9em;
   line-height: 1.6;
 
-  & li + li {
-    margin-top: 0 !important;
+  .markdown-body & li + li {
+    margin-top: 0;
   }
 
   @include breakpoint(md) {

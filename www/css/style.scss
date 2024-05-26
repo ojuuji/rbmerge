@@ -108,8 +108,10 @@ h1 + ul {
   background-color: $bg-white;
   border: 1px solid lighten($gray-200, 3%);
   font-size: 0.9em;
+  line-height: 1.6;
 
   @include breakpoint(md) {
     float: right;
+    margin-left: 1em;
   }
 }

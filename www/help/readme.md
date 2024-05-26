@@ -44,7 +44,7 @@ In such cases, even if the reference part does not exist, nothing actually preve
 
 Each row represents group of parts with the same reference part. This column contains number of parts in this group.
 
-When there are more than one color in the group, number of colors is appended to the number of parts. For example, "5 in 2 colors". Only unique colors count. For example, molds with the same color will not increase this number. So it may be less than the number of parts listed in `Colors` column.
+When there are more than one color in the group, number of colors is appended to the number of parts. For example, "5 in 2 colors". Only unique colors are counted. For example, molds with the same color will not increase this number. So it may be less than the number of parts listed in `Colors` column.
 
 For example, the following group has five combinations of the partnum+color in the `Colors` column, but there are only three unique colors:
 
@@ -54,7 +54,7 @@ For example, the following group has five combinations of the partnum+color in t
 
 Each row contains images and color names for all parts in the group.
 
-Each part number and color is listed there separately and includes its image and number of parts in this color.
+Each part number and color is listed there separately and includes its image and the number of parts in this color.
 
 Parts are grouped by the part number and relation type. So, for example, on the screenshot above first are listed all colors of part `61408` and then all colors of part `33299b`.
 
@@ -64,13 +64,13 @@ Parts with the same part number are sorted by the color (technical details: [`rb
 
 For each part in the group this column contains name of the part and the number of these parts in the inventory.
 
-If there are more than one part number in the group, or if the part number differs from the reference part number in first column, then it also includes part number in the square brackets (see screenshot in `Column #2` above for example).
+If there are more than one part number in the group, or if the part number differs from the reference part number in first column, then description also includes part number in the square brackets (see screenshot in `Column #2` above for example).
 
 In case of multiple part numbers they are listed in the same order as in `Column #3`.
 
 ## Merging Parts
 
-The same parts of different colors are merged unconditionally. Then, basing on the merge options, additional relations are considered for merging.
+The same parts of different colors are merged unconditionally. Then, basing on the merge options, additional part relationships are considered for merging.
 
 How this is done. When processing parts list, every part is resolved to so-called _reference part_. Then all parts with the same reference part are merged together.
 
@@ -84,13 +84,13 @@ Which one becomes the reference part in case of molds and alternates is decided 
 
 ### Merge Options
 
-Merging is based on the part relationships data from Rebrickable. So the merge options directly reflect the build matching options on Rebrickable.
+Merging is based on the part relationships data from Rebrickable. As a result, the merge options directly reflect some of the build matching options on Rebrickable.
 
 Available merge options:
-- **prints** and **patterns**. In RBmerge these are two separate options. Rebrickable uses these relations together in the build matching option _"Ignore printed and patterned part differences"_.
+- **prints** and **patterns**. Rebrickable uses these relationships together in the build matching option _"Ignore printed and patterned part differences"_. In RBmerge these are two separate options (it was just easier to do it this way).
 - **molds**. Rebrickable uses this relation in the build matching option _"Ignore mold variations in parts"_.
 - **alternates**. Rebrickable uses this relation in the build matching option _"Consider alternate parts that can usually be used as replacements, but are not always functionally compatible"_.
-- **extra**. This enables extra relationships, maintained within RBmerge (technical details: [`part_relationships_ex.csv`](https://github.com/ojuuji/rbmerge/blob/master/tables/readme.md#part_relationships_excsv)). Particular relation type from here is applied only if it is enabled. For example, in order for molds extra relationships to be applied there have to be enabled both **molds** and **extra** options.
+- **extra**. This enables extra relationships, maintained within RBmerge (technical details: [`part_relationships_ex.csv`](https://github.com/ojuuji/rbmerge/blob/master/tables/readme.md#part_relationships_excsv)). Particular relationship type from extras is applied only if this type is generally enabled. For example, in order for extra mold relationships to be applied need to enable both **molds** and **extra** options.
 
 ## Filtering Parts
 
@@ -100,13 +100,13 @@ Filtering only considers color and part names. Other text, found in these column
 
 Filtering is case-insensitive.
 
-### Filter Options
-
 Every word from the filter is matched separately. Text (i.e. the color name or the part name) is considered as matched if it contains all words from the filter.
 
-Option `Use smart matching`, which is enabled by default, applies two additional constraints to this:
-1. it forbids reuse of already matched text when matching next word
-2. if a filter word is a number, it must match an entire word from the text.
+### Filter Options
+
+Option `Use smart matching`, which is enabled by default, applies two additional constraints:
+1. When matching next word from the filter, it forbids reuse of text parts already matched by the previous words.
+2. If a filter word is a number, it must match an entire word from the text.
 
 Suppose you entered part name filter "1 x 1". Without this option filtered results would have part containing at least one "1" anywhere, e.g. `Axle Hose, Soft 12L` or `Plate 2 x 14`. However, with this option a part name will match only if it contains two whole words "1":
 

@@ -1,18 +1,14 @@
 # Home
 
-One of many great features, provided by Rebrickable, is possibility to compose a list of all your parts, so you can check how many particular parts you have, in which colors, etc.
+One of many great features, provided by Rebrickable, is possibility to export all your parts, or even arbitrary inventories, as a single plain table, which then can be used offline. In some cases this may be more convenient or faster than using the site.
 
-Rebrickable even provides possibility to export all parts as a single plain table, which then can be used offline.
+However, suppose you are prototyping something and you want to know how many connectors [42195](https://rebrickable.com/parts/42195/) you have. If there are more than one color, multiple rows will be scattered over the table. You may even have an older mold [26287](https://rebrickable.com/parts/26287/).
 
-In some cases this may be more convenient or faster than using the site. Though it may not be as convenient as it could be, because all part colors, molds, prints, patterns are listed there separately.
+But you just want to know how many such parts you have, regardless of colors or molds, which you may not even be aware of.
 
-Suppose you are prototyping something and you want to know how many Technic connectors [42195](https://rebrickable.com/parts/42195/) you have. If you have this part in more than one color, there will be multiple rows for it, scattered over the table. If you are more "lucky", there will even be rows with an older mold variant [26287](https://rebrickable.com/parts/26287/).
+This is where RBmerge may be handy. It merges together all the same parts of different colors, molds, prints, etc.
 
-But you just want to know how many such connectors you have, regardless of their colors or molds, which you may not even know they exist.
-
-This is where RBmerge may be handy. Given a table with all your parts as an input, it transforms table by merging together all the same parts, which have just different colors. Then, basing on your preferences, it also merges prints, patterns, molds, and alternates.
-
-This is how the row for part 42195, mentioned above, may look before and after merging table by RBmerge:
+Here is an example how the part 42195, mentioned above, may look in the table before and after RBmerge:
 
 |Example of part 42195 in original table|Example of part 42195 in merged table|
 |---|---|
@@ -20,4 +16,4 @@ This is how the row for part 42195, mentioned above, may look before and after m
 
 In the merged table all part variants are listed together while still retaining info about variations. For example, you still can check how many colors are there, or how many molds and parts per mold. Detailed description of the table structure can be found in the [Help → Table Structure](help/#table-structure) topic.
 
-To resolve mold variants, prints, patterns, and alternate parts RBmerge uses parts relationships from [Rebrickable Downloads](https://rebrickable.com/downloads/).
+RBmerge comes in two flavors: [Web Application](/app/) and [User Script](/script/).

@@ -110,6 +110,10 @@ h1 + ul {
   font-size: 0.9em;
   line-height: 1.6;
 
+  & li + li {
+    margin-top: 0;
+  }
+
   @include breakpoint(md) {
     float: right;
     margin-left: 1em;

@@ -29,8 +29,8 @@ export default function InventoryHead() {
             {formatCount(parts.filteredCount, parts.mergedCount)}
           </th>
         }
-        <FilterTableHeader setFilter={setColorFilter} value={colorFilter} name="Colors" className='inventory-colors py-0 ps-0' />
-        <FilterTableHeader setFilter={setNameFilter} value={nameFilter} name="Description" className='inventory-desc py-0 ps-0' />
+        <FilterTableHeader setFilter={setColorFilter} value={colorFilter} name="Colors" className='inventory-colors' />
+        <FilterTableHeader setFilter={setNameFilter} value={nameFilter} name="Description" className='inventory-desc' />
       </tr>
     </thead>
   );

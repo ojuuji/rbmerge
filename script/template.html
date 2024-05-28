@@ -32,17 +32,43 @@
 		width: 12ch;
 	}
 
-	th:has(> #rbm_filter_color) {
+	th:has(#rbm_filter_color) {
 		width: 32ch;
 	}
 
-	th>input {
+	th input {
 		border: 0;
 		width: 100%;
 	}
 
 	th:has(> #rbm_toggle_options) {
 		width: 32px
+	}
+
+	span.rbm_filter_input {
+		position: relative;
+		display: inline-flex;
+		align-items: center;
+		width: 100%;
+	}
+
+	span.rbm_filter_input span {
+		position: absolute;
+		display: none;
+		right: 3px;
+		width: 15px;
+		height: 15px;
+		border-radius: 50%;
+		color: #fff;
+		background-color: #ccc;
+		font: 13px monospace;
+		text-align: center;
+		line-height: 1em;
+		cursor: pointer;
+	}
+
+	span.rbm_filter_input input {
+		padding-right: 20px;
 	}
 </style>
 <div id="rbm_options">
@@ -65,8 +91,18 @@
 		<tr>
 			<th id="rbm_num_ref_parts">0</th>
 			<th id="rbm_num_all_parts">0</th>
-			<th><input type="search" placeholder="Colors" id="rbm_filter_color" /></th>
-			<th><input type="search" placeholder="Description" id="rbm_filter_name" /></th>
+			<th>
+				<span class="rbm_filter_input">
+					<input type="text" placeholder="Colors" id="rbm_filter_color" />
+					<span>✕</span>
+				</span>
+			</th>
+			<th>
+				<span class="rbm_filter_input">
+					<input type="text" placeholder="Description" id="rbm_filter_name" />
+					<span>✕</span>
+				</span>
+			</th>
 			<th>
 				<button title="Toggle Options" id="rbm_toggle_options">
 					<svg xmlns="http://www.w3.org/2000/svg" fill="#444" width="24" height="24" viewBox="0 0 24 24">

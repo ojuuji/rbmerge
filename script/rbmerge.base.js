@@ -391,12 +391,34 @@ function resetTable() {
   }
 
   for (const name of ['color', 'name']) {
-    const el = document.getElementById('rbm_filter_' + name);
-    el.addEventListener('input', ({target: element}) => {
-      options_[element.id.replace('rbm_', '')] = element.value;
+    const input = document.getElementById('rbm_filter_' + name);
+    const clear = input.nextElementSibling;
+
+    const updateClear = () => {
+      clear.style.display = input.value.length < 2 ? 'none' : 'block';
+    };
+    const handleInput = () => {
+      updateClear();
+      options_[input.id.replace('rbm_', '')] = input.value;
       filter();
+    };
+    input.addEventListener('input', handleInput);
+    input.addEventListener('keydown', (e) => {
+      if (e.key == 'Escape') {
+        e.preventDefault();
+        input.value = '';
+        handleInput();
+      }
     });
-    el.value = options_['filter_' + name];
+
+    input.value = options_['filter_' + name];
+    updateClear();
+
+    clear.addEventListener('click', () => {
+      input.value = '';
+      input.focus();
+      handleInput();
+    })
   }
 
   for (const name of ['smart', 'groups']) {

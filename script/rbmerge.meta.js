@@ -9,13 +9,13 @@
 // @downloadURL  https://ojuuji.github.io/rbmerge/js/rbmerge.js
 // @supportURL   https://github.com/ojuuji/rbmerge/issues
 // @namespace    https://github.com/ojuuji/
-// @match        https://rebrickable.com/inventory/*/parts/?format=table
-// @match        https://rebrickable.com/users/*/allparts/parts/?format=table
-// @match        https://rebrickable.com/users/*/partlists/parts/?format=table
-// @match        https://rebrickable.com/users/*/partlists/*/parts/?format=table
-// @match        https://rebrickable.com/users/*/lostparts/parts/?format=table
-// @match        https://rebrickable.com/users/*/lists/*/parts/?format=table
-// @match        https://rebrickable.com/sets/compare/slow/?format=table
+// @match        https://rebrickable.com/inventory/*/parts/?format=table*
+// @match        https://rebrickable.com/users/*/allparts/parts/?format=table*
+// @match        https://rebrickable.com/users/*/partlists/parts/?format=table*
+// @match        https://rebrickable.com/users/*/partlists/*/parts/?format=table*
+// @match        https://rebrickable.com/users/*/lostparts/parts/?format=table*
+// @match        https://rebrickable.com/users/*/lists/*/parts/?format=table*
+// @match        https://rebrickable.com/sets/compare/slow/?format=table*
 // @grant        none
 // ==/UserScript==
 

@@ -1,4 +1,7 @@
-#! /bin/bash -eu
+#! /bin/bash
+
+set -eu
+set -o pipefail
 
 Die()
 {
@@ -10,7 +13,10 @@ ME_FULLPATH="$(readlink -f "$BASH_SOURCE")"
 ME="$(basename "$ME_FULLPATH")"
 WORKDIR="$(dirname "$ME_FULLPATH")"
 
-which base64 gzip > /dev/null
+which base64 gzip sqlite3 > /dev/null
+
+"${WORKDIR}/../tables/download.sh"
+DB="${WORKDIR}/../tables/rb.db"
 
 SOURCE="${WORKDIR}/rbmerge.base.js"
 SOURCE_META="${WORKDIR}/rbmerge.meta.js"
@@ -19,8 +25,13 @@ TARGET_META="${WORKDIR}/../www/js/rbmerge.meta.js"
 
 mkdir -p "$(dirname "$TARGET")"
 
-DEPS=("$SOURCE" "$SOURCE_META" "${WORKDIR}/../tables/"{part_relationships_ex,rbm_colors,rbm_part_relationships}.csv)
-VERSION="$(date --utc --date=@"$(git log -1 --format="%at" "${DEPS[@]}")" +%F.%H-%M-%S)"
+DEPS=("$SOURCE" "$SOURCE_META" "${WORKDIR}/../tables/part_relationships_ex.csv")
+# Get individually to catch errors
+TS1="$(git log -1 --format="%at" "${DEPS[@]}")"
+TS2="$(sqlite3 "$DB" "SELECT value FROM rb_db_lov WHERE key = 'data_timestamp'")"
+[[ "$TS1" -gt "$TS2" ]] && TS="$TS1" || TS="$TS2"
+
+VERSION="$(date --utc --date=@"$TS" +%F.%H-%M-%S)"
 echo ":: determined version number: $VERSION"
 
 echo ":: generating $(basename "$TARGET_META") ..."
@@ -42,8 +53,19 @@ head -n$((FIRST_LINE-1)) "$SOURCE" >> "$TARGET"
 
 echo ":: building part relationships ..."
 
+SQL_RELS="$(cat <<EOF
+SELECT *
+  FROM part_relationships
+ WHERE rel_type IN ('P', 'T')
+ UNION
+SELECT *
+  FROM part_rels_resolved
+ WHERE rel_type IN ('A', 'M')
+EOF
+)"
+
 echo -en '\tconst relsData = "' >> "$TARGET"
-gzip -c9n "${WORKDIR}/../tables/rbm_part_relationships.csv" | base64 -w0 >> "$TARGET"
+sqlite3 -csv "$DB" "$SQL_RELS" | tr -d '\r' | gzip -9n | base64 -w0 >> "$TARGET"
 echo '";' >> "$TARGET"
 
 echo -en '\tconst relsExData = "' >> "$TARGET"
@@ -53,7 +75,15 @@ echo '";' >> "$TARGET"
 echo ":: building colors ..."
 
 echo -en '\tconst colorsData = "' >> "$TARGET"
-gzip -c9n "${WORKDIR}/../tables/rbm_colors.csv" | base64 -w0 >> "$TARGET"
+
+SQL_COLORS="$(cat <<EOF
+      SELECT name
+        FROM colors
+NATURAL JOIN color_properties p
+    ORDER BY p.sort_pos
+EOF
+)"
+sqlite3 -list "$DB" "$SQL_COLORS" | tr -d '\r' | gzip -9n | base64 -w0 >> "$TARGET"
 echo '";' >> "$TARGET"
 
 tail -n+$((LAST_LINE+1)) "$SOURCE" >> "$TARGET"

@@ -17,8 +17,8 @@
     "serve": "^14.2.2"
   },
   "scripts": {
-    "prestart": "node ./generate-version.mjs && node ./src/data/prepare.mjs",
-    "prebuild": "node ./generate-version.mjs && node ./src/data/prepare.mjs",
+    "prestart": "bash ./generate-version.sh && bash ./src/data/prepare.sh",
+    "prebuild": "bash ./generate-version.sh && bash ./src/data/prepare.sh",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "build-localhost": "cross-env PUBLIC_URL=/ npm run build"

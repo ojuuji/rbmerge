@@ -3,5 +3,6 @@
 /app/src/data/*.json
 /app/.env.local
 /app/.env.*.local
+/tables/rb.db*
 /www/js/rbmerge.js
 /www/js/rbmerge.meta.js

@@ -35,4 +35,17 @@ sqlite3 "${DBDIR}/rb.db" "$SQL_RELS" > "${WORKDIR}/rels.json"
 
 echo ":: generating relsEx.json ..."
 
-echo "[\"$(grep -vPx '#.*|\s*' "${DBDIR}/part_relationships_ex.csv" | tr '\n' '@' | sed 's/\\/\\\\/g;s/@$//;s/@/\\n/g')\"]" > "${WORKDIR}/relsEx.json"
+SQL_RELS_EX="$(cat <<EOF
+SELECT json_group_array(
+	json_array(
+		child_part_num || ':' || rel_type,
+		parent_part_num
+	) ORDER BY 1, 2
+) FROM (
+	SELECT *
+	  FROM part_rels_extra
+	 WHERE rel_type IN ('A', 'M', 'P', 'T')
+) t;
+EOF
+)"
+sqlite3 "${DBDIR}/rb.db" "$SQL_RELS_EX" > "${WORKDIR}/relsEx.json"

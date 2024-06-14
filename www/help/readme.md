@@ -58,7 +58,7 @@ Each part number and color is listed there separately and includes its image and
 
 Parts are grouped by the part number and relation type. So, for example, on the screenshot above first are listed all colors of part `61408` and then all colors of part `33299b`.
 
-Parts with the same part number are sorted by the color (technical details: [`rbm_colors.csv`](https://github.com/ojuuji/rbmerge/blob/master/tables/readme.md#rbm_colorscsv)). So the parts order is consistent across all parts in the inventory.
+Parts with the same part number are sorted by the color (technical details: [`color_properties`](https://ojuuji.github.io/rb.db/#color_properties)). So the parts order is consistent across all parts in the inventory.
 
 ### Column #4: Description
 
@@ -80,7 +80,7 @@ Part is resolved to the reference part if it meets any of these criteria:
 
 For the prints and patterns the reference part is always the plain one.
 
-Which one becomes the reference part in case of molds and alternates is decided basing on the part usage in the sets and the years when it was used. Basically it will be either a part with the most recent year or, if there are multiple parts with the same year, the one that is referenced in more sets (technical details: [`rbm_part_relationships.csv`](https://github.com/ojuuji/rbmerge/blob/master/tables/readme.md#rbm_part_relationshipscsv)).
+Which one becomes the reference part in case of molds and alternates is decided basing on the part usage in the sets and the years when it was used. Basically it will be either a part with the most recent year or, if there are multiple parts with the same year, the one that is referenced in more sets (technical details: [`part_rels_resolved`](https://ojuuji.github.io/rb.db/#part_rels_resolved)).
 
 ### Merge Options
 
@@ -90,7 +90,7 @@ Available merge options:
 - **prints** and **patterns**. Rebrickable uses these relationships together in the build matching option _"Ignore printed and patterned part differences"_. In RBmerge these are two separate options (it was just easier to do it this way).
 - **molds**. Rebrickable uses this relation in the build matching option _"Ignore mold variations in parts"_.
 - **alternates**. Rebrickable uses this relation in the build matching option _"Consider alternate parts that can usually be used as replacements, but are not always functionally compatible"_.
-- **extra**. This enables extra relationships, maintained within RBmerge (technical details: [`part_relationships_ex.csv`](https://github.com/ojuuji/rbmerge/blob/master/tables/readme.md#part_relationships_excsv)). Particular relationship type from extras is applied only if this type is generally enabled. For example, in order for extra mold relationships to be applied need to enable both **molds** and **extra** options.
+- **extra**. This enables extra relationships, not listed on Rebrickable (technical details: [`part_rels_extra`](https://ojuuji.github.io/rb.db/#part_rels_extra)). Particular relationship type from extras is applied only if this type is generally enabled. For example, in order for extra mold relationships to be applied need to enable both **molds** and **extra** options.
 
 ## Filtering Parts
 

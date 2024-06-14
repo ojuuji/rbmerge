@@ -23,15 +23,10 @@ function resolve(part, [mergePrints, mergePatterns, mergeMolds, mergeAlternates,
     let resolved, resolvedSortFactor;
     for (const [rel, sortFactor, shouldResolve] of links) {
       if (shouldResolve) {
-        resolved = null !== rels ? rels.get(key(part.refPartNum, rel)) : undefined;
+        const partKey = key(part.refPartNum, rel);
+        resolved = null !== rels ? rels.get(partKey) : undefined;
         if (resolved === undefined && mergeExtra && null !== relsEx) {
-          for (const {regex, partNum} of relsEx.get(rel)) {
-            let replaced = part.refPartNum.replace(regex, partNum);
-            if (replaced !== part.refPartNum) {
-              resolved = replaced;
-              break;
-            }
-          }
+          resolved = relsEx.get(partKey);
         }
         if (resolved !== undefined) {
           resolvedSortFactor = sortFactor;

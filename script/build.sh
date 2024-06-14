@@ -25,9 +25,8 @@ TARGET_META="${WORKDIR}/../www/js/rbmerge.meta.js"
 
 mkdir -p "$(dirname "$TARGET")"
 
-DEPS=("$SOURCE" "$SOURCE_META" "${WORKDIR}/../tables/part_relationships_ex.csv")
 # Get individually to catch errors
-TS1="$(git log -1 --format="%at" "${DEPS[@]}")"
+TS1="$(git log -1 --format="%at" "$SOURCE" "$SOURCE_META")"
 TS2="$(sqlite3 "$DB" "SELECT value FROM rb_db_lov WHERE key = 'data_timestamp'")"
 [[ "$TS1" -gt "$TS2" ]] && TS="$TS1" || TS="$TS2"
 
@@ -68,8 +67,15 @@ echo -en '\tconst relsData = "' >> "$TARGET"
 sqlite3 -csv "$DB" "$SQL_RELS" | tr -d '\r' | gzip -9n | base64 -w0 >> "$TARGET"
 echo '";' >> "$TARGET"
 
+SQL_RELS_EX="$(cat <<EOF
+SELECT *
+  FROM part_rels_extra
+ WHERE rel_type IN ('A', 'M', 'P', 'T')
+EOF
+)"
+
 echo -en '\tconst relsExData = "' >> "$TARGET"
-grep -vPx '#.*|\s*' "${WORKDIR}/../tables/part_relationships_ex.csv" | gzip -9n | base64 -w0 >> "$TARGET"
+sqlite3 -csv "$DB" "$SQL_RELS_EX" | tr -d '\r' | gzip -9n | base64 -w0 >> "$TARGET"
 echo '";' >> "$TARGET"
 
 echo ":: building colors ..."

@@ -6,7 +6,7 @@ cd "$(dirname "$(readlink -f "$BASH_SOURCE")")"
 
 ../tables/download.sh
 
-TS1="$(git log -1 --format="%at" . "../tables/*.csv")"
+TS1="$(git log -1 --format="%at" .)"
 TS2="$(sqlite3 ../tables/rb.db "SELECT value FROM rb_db_lov WHERE key = 'data_timestamp'")"
 [[ "$TS1" -gt "$TS2" ]] && TS="$TS1" || TS="$TS2"
 

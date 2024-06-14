@@ -71,7 +71,7 @@ const REL_PRINT   = 'P';
 const REL_PATTERN = 'T';
 
 const rels_ = new Map();
-const relsEx_ = new Map([[REL_ALT, []], [REL_MOLD, []], [REL_PRINT, []], [REL_PATTERN, []]]);
+const relsEx_ = new Map();
 const colors_ = [];
 
 async function init() {
@@ -86,11 +86,11 @@ async function init() {
     rels_.set(key(child, type), parent);
   }
 
-  // <rel_type><sep><child_part_num_regex><sep><parent_part_num>\n...
+  // <rel_type>,<child_part_num>,<parent_part_num>\n...
   const relExSpecs = (await decompress(relsExData)).trim().split('\n');
   for (const spec of relExSpecs) {
-    const [type, child, parent] = spec.split(spec[1]);
-    relsEx_.get(type).push({regex: new RegExp(`^${child}$`), partNum: parent});
+    const [type, child, parent] = spec.split(',');
+    relsEx_.set(key(child, type), parent);
   }
 
   // already sorted colors in form <name>\n...
@@ -150,15 +150,10 @@ function resolve(part) {
     let resolved, resolvedSortFactor;
     for (const [rel, sortFactor, shouldResolve] of links) {
       if (shouldResolve) {
-        resolved = rels_.get(key(part.refPartNum, rel));
+        const partKey = key(part.refPartNum, rel);
+        resolved = rels_.get(partKey);
         if (resolved === undefined && resolveExtra) {
-          for (const {regex, partNum} of relsEx_.get(rel)) {
-            let replaced = part.refPartNum.replace(regex, partNum);
-            if (replaced !== part.refPartNum) {
-              resolved = replaced;
-              break;
-            }
-          }
+          resolved = relsEx_.get(partKey);
         }
         if (resolved !== undefined) {
           resolvedSortFactor = sortFactor;

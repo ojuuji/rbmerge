@@ -6,7 +6,6 @@ on:
       - 'app/**'
       - 'script/*.js'
       - 'script/template.html'
-      - 'tables/*.csv'
       - 'www/**'
 
   workflow_dispatch:

@@ -1,4 +1,5 @@
 import Dexie from 'dexie';
+import parts from '../data/parts.json';
 import { colorNameToId, makeColorMapper } from './colors';
 
 const db = new Dexie('rbmerge');
@@ -8,6 +9,7 @@ db.version(1).stores({
 });
 
 export async function loadInventory() {
+  const partsMap = new Map(parts);
   const colorMapper = makeColorMapper();
   const inventory = await db.inventory.toArray()
 
@@ -20,6 +22,7 @@ export async function loadInventory() {
       const colorId = colorNameToId(p.color);
       p.color = colorMapper(colorId);
     }
+    p.name = partsMap.get(p.partNum) || p.name;
     return p;
   });
 }

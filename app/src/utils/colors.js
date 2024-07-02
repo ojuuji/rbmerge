@@ -23,5 +23,8 @@ export function colorNameToId(name) {
       return id;
     }
   }
+
+  console.warn(`failed to get id for color name "${name}"`);
+
   return UNKNOWN_ID;
 }

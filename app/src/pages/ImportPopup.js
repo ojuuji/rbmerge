@@ -47,7 +47,7 @@ export default function ImportPopup({show, handleClose}) {
       </Alert>}
       <Form onSubmit={onSubmit}>
         <Form.Group controlId='formFile'>
-          <Form.Label >Select inventory CSV or HTML table</Form.Label>
+          <Form.Label >Select inventory exported as Rebrickable CSV or HTML table</Form.Label>
           <Stack direction='horizontal' gap={1}>
             <Form.Control type='file' onChange={handleChange} />
             <Button variant='primary' type='submit' disabled={!state?.file}>Import</Button>

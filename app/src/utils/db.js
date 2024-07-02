@@ -25,7 +25,7 @@ export async function loadInventory() {
       p.color = colorMapper(colorId);
     }
 
-    p.name = partsMap.get(p.partNum) || p.name;
+    p.name = partsMap.get(p.partNum) || p.name || '[Unknown]';
 
     if (p.img === undefined) {
       const url = imagesMap.get(`${p.partNum}:${p.color.id}`);

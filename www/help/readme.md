@@ -46,7 +46,7 @@ Each row represents group of parts with the same reference part. This column con
 
 When there are more than one color in the group, number of colors is appended to the number of parts. For example, "5 in 2 colors". Only unique colors are counted. For example, molds with the same color will not increase this number. So it may be less than the number of parts listed in `Colors` column.
 
-For example, the following group has five combinations of the partnum+color in the `Colors` column, but there are only three unique colors:
+For example, the following group has five part_num/color combinations in the `Colors` column, but there are only three unique colors:
 
 ![Example when number of unique colors is less than total number of colors](../images/example_uniq_colors_lt_total.png)
 

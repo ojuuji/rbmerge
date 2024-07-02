@@ -1,5 +1,6 @@
 import Dexie from 'dexie';
 import parts from '../data/parts.json';
+import images from '../data/images.json';
 import { colorNameToId, makeColorMapper } from './colors';
 
 const db = new Dexie('rbmerge');
@@ -11,6 +12,7 @@ db.version(1).stores({
 export async function loadInventory() {
   const partsMap = new Map(parts);
   const colorMapper = makeColorMapper();
+  const imagesMap = new Map(images);
   const inventory = await db.inventory.toArray()
 
   return inventory.map(p => {
@@ -22,7 +24,16 @@ export async function loadInventory() {
       const colorId = colorNameToId(p.color);
       p.color = colorMapper(colorId);
     }
+
     p.name = partsMap.get(p.partNum) || p.name;
+
+    if (p.img === undefined) {
+      const url = imagesMap.get(`${p.partNum}:${p.color.id}`);
+      if (url !== undefined) {
+        p.img = url.startsWith('/') ? `https://cdn.rebrickable.com/media/parts${url}` : url;
+      }
+    }
+
     return p;
   });
 }

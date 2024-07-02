@@ -10,7 +10,7 @@ function ColorsCell(group) {
     prevSortFactor = part.sortFactor;
 
     return (
-      <div key={`${part.partNum}-${part.color}`}>
+      <div key={`${part.partNum}-${part.color.id}`}>
         {addSeparator && <hr className='m-0' />}
 
         <Row className='align-items-center'>
@@ -18,7 +18,7 @@ function ColorsCell(group) {
             <img loading='lazy' alt="" src={part.img} width='85' height='85' />
           </Col>
           <Col>
-            {part.count}&nbsp;{part.color}
+            {part.count}&nbsp;{part.color.name}
           </Col>
         </Row>
       </div>
@@ -54,7 +54,7 @@ export default function InventoryRow({group}) {
     const part = group[i];
     count += part.count;
 
-    colorsUniq.add(part.color);
+    colorsUniq.add(part.color.id);
 
     if (countPerPartNum.at(-1)?.partNum !== part.partNum) {
       countPerPartNum.push({partNum: part.partNum, count: 0, name: part.name});

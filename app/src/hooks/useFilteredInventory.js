@@ -22,7 +22,7 @@ function applyGroupsFilter(isName, source, filter, filterSmart) {
     let groupFilter = [...filter];
     let lastText;
     grouploop: for (const part of group) {
-      let text = isName ? part.nameLowerCase : part.colorLowerCase;
+      let text = isName ? part.nameLowerCase : part.color.nameLowerCase;
       if (lastText !== text) {
         lastText = text;
         for (let i = groupFilter.length - 1; i >= 0; i --) {

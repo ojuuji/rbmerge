@@ -1,3 +1,5 @@
+import { colorNameToId } from "./colors";
+
 export default async function importInventory(data) {
   const thead = "<tr>\n<th>Image</th>\n<th>Part Num</th>\n<th>Quantity</th>\n<th>Color</th>\n<th>Description</th>\n</tr>\n";
   if (!data.includes(thead)) {
@@ -13,7 +15,7 @@ export default async function importInventory(data) {
       img: img,
       partNum: partNum,
       count: Number(count),
-      color: color,
+      colorId: colorNameToId(color),
       name: name,
     };
     inventory.push(part);

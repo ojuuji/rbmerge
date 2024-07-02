@@ -3,13 +3,12 @@ import useRels from './useRels';
 import useRelsEx from './useRelsEx';
 import { useInventory } from '../contexts/InventoryProvider';
 import { useMergeOptions } from '../contexts/MergeOptionsProvider';
-import { compareColors } from '../utils/colors';
 import { Rel, key } from '../utils/rels';
 
 function resolve(part, [mergePrints, mergePatterns, mergeMolds, mergeAlternates, mergeExtra, rels, relsEx]) {
   part['refPartNum'] = part.partNum;
   part['sortFactor'] = 0;
-  part['colorLowerCase'] = part.color.toLowerCase();
+  part.color['nameLowerCase'] = part.color.name.toLowerCase();
   part['nameLowerCase'] = part.name.toLowerCase();
 
   let found = new Set();
@@ -69,7 +68,7 @@ function merge(inventory, options) {
   for (const group of merged) {
     group.sort((l, r) => l.sortFactor - r.sortFactor
       || l.partNum.localeCompare(r.partNum)
-      || compareColors(l.color, r.color));
+      || l.color.sortPos - r.color.sortPos);
     for (const part of group) {
       mergedCount += part.count;
     }

@@ -1,12 +1,27 @@
-import colorsSorted from '../data/colors.json';
+import colors from '../data/colors.json';
 
-export function compareColors(l, r) {
-  if (l !== r) {
-    for (const color of colorsSorted) {
-      if (color === l || color === r) {
-        return color === l ? -1 : 1;
-      }
+const UNKNOWN_ID = -1;
+const IDX_NAME = 0;
+const IDX_SORT_POS = 1;
+
+export function makeColorMapper() {
+  const colorMap = new Map(colors);
+  return id => {
+    const resolvedId = colorMap.has(id) ? id : UNKNOWN_ID;
+    const spec = colorMap.get(resolvedId);
+    return {
+      id: resolvedId,
+      name: spec[IDX_NAME],
+      sortPos: spec[IDX_SORT_POS]
+    };
+  }
+}
+
+export function colorNameToId(name) {
+  for (const [id, spec] of colors) {
+    if (spec[IDX_NAME] === name) {
+      return id;
     }
   }
-  return 0;
+  return UNKNOWN_ID;
 }

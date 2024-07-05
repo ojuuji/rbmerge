@@ -56,7 +56,7 @@ function applyPartsFilter(isName, source, filter, filterSmart) {
     let filteredGroup = [];
     for (const part of group) {
       let matches = true;
-      let text = isName ? part.nameLowerCase : part.colorLowerCase;
+      let text = isName ? part.nameLowerCase : part.color.nameLowerCase;
       for (let i = 0; i < filter.length && matches; i++) {
         [matches, text] = match(text, filter[i], filterSmart);
       }

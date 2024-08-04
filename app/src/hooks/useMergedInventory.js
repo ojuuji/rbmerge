@@ -6,7 +6,9 @@ import { useMergeOptions } from '../contexts/MergeOptionsProvider';
 import { Rel, key } from '../utils/rels';
 
 function resolve(part, [mergePrints, mergePatterns, mergeMolds, mergeAlternates, mergeExtra, rels, relsEx]) {
+  part['partNumLowerCase'] = part.partNum.toLowerCase();
   part['refPartNum'] = part.partNum;
+  part['refPartNumLowerCase'] = part.partNum.toLowerCase();
   part['sortFactor'] = 0;
   part.color['nameLowerCase'] = part.color.name.toLowerCase();
   part['nameLowerCase'] = part.name.toLowerCase();
@@ -43,6 +45,7 @@ function resolve(part, [mergePrints, mergePatterns, mergeMolds, mergeAlternates,
     }
     found.add(resolved);
     part.refPartNum = resolved;
+    part.refPartNumLowerCase = resolved.toLowerCase();
     part.sortFactor += resolvedSortFactor;
   }
 }

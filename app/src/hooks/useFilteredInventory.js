@@ -14,24 +14,38 @@ function match(text, filter, filterSmart) {
   }
 }
 
+function matchPartNum(part, filter) {
+  return part.partNumLowerCase.includes(filter) || part.refPartNumLowerCase.includes(filter);
+}
+
 function applyGroupsFilter(isName, source, filter, filterSmart) {
   let filtered = [];
   let filteredCount = 0;
 
   for (const group of source) {
     let groupFilter = [...filter];
-    let lastText;
-    grouploop: for (const part of group) {
-      let text = isName ? part.nameLowerCase : part.color.nameLowerCase;
-      if (lastText !== text) {
-        lastText = text;
-        for (let i = groupFilter.length - 1; i >= 0; i --) {
-          const [matched, newText] = match(text, groupFilter[i], filterSmart);
-          if (matched) {
-            text = newText;
-            groupFilter.splice(i, 1);
-            if (groupFilter.length === 0) {
-              break grouploop;
+    if (isName && groupFilter.length === 1) {
+      for (const part of group) {
+        if (matchPartNum(part, filter[0])) {
+          groupFilter = [];
+          break;
+        }
+      }
+    }
+    if (groupFilter.length !== 0) {
+      let lastText;
+      grouploop: for (const part of group) {
+        let text = isName ? part.nameLowerCase : part.color.nameLowerCase;
+        if (lastText !== text) {
+          lastText = text;
+          for (let i = groupFilter.length - 1; i >= 0; i --) {
+            const [matched, newText] = match(text, groupFilter[i], filterSmart);
+            if (matched) {
+              text = newText;
+              groupFilter.splice(i, 1);
+              if (groupFilter.length === 0) {
+                break grouploop;
+              }
             }
           }
         }
@@ -56,9 +70,11 @@ function applyPartsFilter(isName, source, filter, filterSmart) {
     let filteredGroup = [];
     for (const part of group) {
       let matches = true;
-      let text = isName ? part.nameLowerCase : part.color.nameLowerCase;
-      for (let i = 0; i < filter.length && matches; i++) {
-        [matches, text] = match(text, filter[i], filterSmart);
+      if (!isName || filter.length !== 1 || !matchPartNum(part, filter[0])) {
+        let text = isName ? part.nameLowerCase : part.color.nameLowerCase;
+        for (let i = 0; i < filter.length && matches; i++) {
+          [matches, text] = match(text, filter[i], filterSmart);
+        }
       }
       if (matches) {
         filteredGroup.push(part);
@@ -94,12 +110,12 @@ export default function useFilteredInventory() {
     }
     else {
       let [filteredColor, filteredColorCount] = colorWords.length === 0
-      ? [parts.merged, parts.mergedCount]
-      : applyFilter(false, parts.merged, colorWords, filterSmart, filterGroups);
+        ? [parts.merged, parts.mergedCount]
+        : applyFilter(false, parts.merged, colorWords, filterSmart, filterGroups);
 
       [parts.filtered, parts.filteredCount] = nameWords.length === 0
-      ? [filteredColor, filteredColorCount]
-      : applyFilter(true, filteredColor, nameWords, filterSmart, filterGroups);
+        ? [filteredColor, filteredColorCount]
+        : applyFilter(true, filteredColor, nameWords, filterSmart, filterGroups);
     }
 
     setFiltered(parts);

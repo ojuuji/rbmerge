@@ -123,7 +123,9 @@ function parse() {
     const part = {
       img: img,
       partNum: partNum,
+      partNumLowerCase: partNum.toLowerCase(),
       refPartNum: partNum,
+      refPartNumLowerCase: partNum.toLowerCase(),
       count: Number(count),
       color: color,
       colorLowerCase: color.toLowerCase(),
@@ -171,6 +173,7 @@ function resolve(part) {
     }
     found.add(resolved);
     part.refPartNum = resolved;
+    part.refPartNumLowerCase = resolved.toLowerCase();
     part.sortFactor += resolvedSortFactor;
   }
 }
@@ -246,6 +249,10 @@ function matchFilter(text, filter) {
   }
 }
 
+function matchPartNum(part, filter) {
+  return part.partNumLowerCase.includes(filter) || part.refPartNumLowerCase.includes(filter);
+}
+
 function filterFrom(isName, source, filter) {
   let filtered = [];
   let filteredCount = 0;
@@ -253,19 +260,29 @@ function filterFrom(isName, source, filter) {
   if (options_['filter_groups']) {
     for (const group of source) {
       let groupFilter = [...filter];
-      let lastText;
-      grouploop: for (const part of group) {
-        let text = isName ? part.nameLowerCase : part.colorLowerCase;
-        // Still skip duplicate names (e.g. same parts with different colors)
-        if (lastText !== text) {
-          lastText = text;
-          for (let i = groupFilter.length - 1; i >= 0; i --) {
-            const [matched, newText] = matchFilter(text, groupFilter[i]);
-            if (matched) {
-              text = newText;
-              groupFilter.splice(i, 1);
-              if (groupFilter.length === 0) {
-                break grouploop;
+      if (isName && groupFilter.length === 1) {
+        for (const part of group) {
+          if (matchPartNum(part, filter[0])) {
+            groupFilter = [];
+            break;
+          }
+        }
+      }
+      if (groupFilter.length !== 0) {
+        let lastText;
+        grouploop: for (const part of group) {
+          let text = isName ? part.nameLowerCase : part.colorLowerCase;
+          // Still skip duplicate names (e.g. same parts with different colors)
+          if (lastText !== text) {
+            lastText = text;
+            for (let i = groupFilter.length - 1; i >= 0; i --) {
+              const [matched, newText] = matchFilter(text, groupFilter[i]);
+              if (matched) {
+                text = newText;
+                groupFilter.splice(i, 1);
+                if (groupFilter.length === 0) {
+                  break grouploop;
+                }
               }
             }
           }
@@ -282,9 +299,11 @@ function filterFrom(isName, source, filter) {
       let filteredGroup = [];
       for (const part of group) {
         let matches = true;
-        let text = isName ? part.nameLowerCase : part.colorLowerCase;
-        for (let i = 0; i < filter.length && matches; i++) {
-          [matches, text] = matchFilter(text, filter[i]);
+        if (!isName || filter.length !== 1 || !matchPartNum(part, filter[0])) {
+          let text = isName ? part.nameLowerCase : part.colorLowerCase;
+          for (let i = 0; i < filter.length && matches; i++) {
+            [matches, text] = matchFilter(text, filter[i]);
+          }
         }
         if (matches) {
           filteredGroup.push(part);

@@ -96,7 +96,9 @@ Available merge options:
 
 Rows in the table can be filtered by the color names and by the part names, separately. The filter edit boxes are combined with corresponding column headers.
 
-Filtering only considers color and part names. Other text, found in these columns, i.e. numbers of parts and the part numbers, is ignored by the filters.
+Color filter only matches the color name. I.e. number of parts in particular color is ignored.
+
+Part name filter matches the part name and the part number (both the reference part number and the original part number). Part numbers are matched only when filter consists of a single word. And like with the color filter, number of parts is ignored by this filter.
 
 Filtering is case-insensitive.
 

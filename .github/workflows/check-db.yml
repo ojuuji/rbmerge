@@ -1,0 +1,29 @@
+name: check-db
+
+on:
+  schedule:
+    - cron: '10 8 * * *'  # daily at 8:10 UTC
+
+  workflow_dispatch:
+
+jobs:
+  check-db:
+    - name: Get Hash
+      id: get-hash
+      run: |
+        hash="$(curl -L https://github.com/ojuuji/rb.db/releases/download/latest/rb.db.sha256)"
+        echo "hash=$hash" >> $GITHUB_OUTPUT
+
+    - uses: actions/cache@v4
+      id: cache
+      with:
+        key: steps.get-hash.outputs.hash
+
+    - name: deploy-site:
+      if: steps.cache.outputs.cache-hit != 'true'
+      uses: ./.github/workflows/deploy-site.yml
+      permissions:
+        contents: read
+        pages: write
+        id-token: write
+      secrets: inherit

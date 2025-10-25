@@ -10,6 +10,8 @@ on:
 
   workflow_dispatch:
 
+  workflow_call:
+
 permissions:
   contents: read
   pages: write
@@ -17,7 +19,7 @@ permissions:
 
 concurrency:
   group: pages
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   build:

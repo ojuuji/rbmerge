@@ -20,7 +20,7 @@ jobs:
         id: cache
         with:
           path: rb.db.sha256
-          key: steps.get-hash.outputs.hash
+          key: rb.db hash ${{ steps.get-hash.outputs.hash }}
     outputs:
       cache-hit: ${{ steps.cache.outputs.cache-hit }}
   

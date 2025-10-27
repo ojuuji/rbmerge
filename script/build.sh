@@ -63,7 +63,7 @@ SELECT *
 EOF
 )"
 
-echo -en '\tconst relsData = "' >> "$TARGET"
+echo -en '  const relsData = "' >> "$TARGET"
 sqlite3 -csv "$DB" "$SQL_RELS" | tr -d '\r' | gzip -9n | base64 -w0 >> "$TARGET"
 echo '";' >> "$TARGET"
 
@@ -74,13 +74,13 @@ SELECT *
 EOF
 )"
 
-echo -en '\tconst relsExData = "' >> "$TARGET"
+echo -en '  const relsExData = "' >> "$TARGET"
 sqlite3 -csv "$DB" "$SQL_RELS_EX" | tr -d '\r' | gzip -9n | base64 -w0 >> "$TARGET"
 echo '";' >> "$TARGET"
 
 echo ":: building colors ..."
 
-echo -en '\tconst colorsData = "' >> "$TARGET"
+echo -en '  const colorsData = "' >> "$TARGET"
 
 SQL_COLORS="$(cat <<EOF
       SELECT name
@@ -100,7 +100,7 @@ echo ":: embedding $(basename "$TEMPLATE") ..."
 TEMPLATE_LINE=$(grep -Fn "document.getElementsByTagName('body')[0].innerHTML = '{{TEMPLATE}}';" "$TARGET" | grep -Po '^\d+') || Die "failed to get line index"
 
 head -n$((TEMPLATE_LINE-1)) "$TARGET" > "${TARGET}.tmp"
-echo -e "\tdocument.getElementsByTagName('body')[0].innerHTML = \`" >> "${TARGET}.tmp"
+echo -e "  document.getElementsByTagName('body')[0].innerHTML = \`" >> "${TARGET}.tmp"
 cat "$TEMPLATE" >> "${TARGET}.tmp"
 echo '`;' >> "${TARGET}.tmp"
 tail -n+$((TEMPLATE_LINE+1)) "$TARGET" >> "${TARGET}.tmp"

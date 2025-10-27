@@ -20,4 +20,15 @@ npm ci
 npm start
 ```
 
+To run the site locally:
+
+```bash
+./script/build.sh
+cd app
+npm run build
+cd ../www
+bundle install
+bundle exec jekyll serve
+```
+
 These steps are automated via GitHub Actions, so you may check [workflows](.github/workflows) directory for details.

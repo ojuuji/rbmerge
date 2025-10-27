@@ -21,7 +21,8 @@
     "prebuild": "bash ./generate-version.sh && bash ./src/data/prepare.sh",
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "build-localhost": "cross-env PUBLIC_URL=/ npm run build"
+    "build-localhost": "cross-env PUBLIC_URL=/ npm run build",
+    "postbuild": "bash -c 'rm -rf ../www/app && mv build ../www/app'"
   },
   "eslintConfig": {
     "extends": [

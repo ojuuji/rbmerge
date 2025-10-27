@@ -4,5 +4,8 @@
 /app/.env.local
 /app/.env.*.local
 /tables/rb.db*
+/www/app
 /www/js/rbmerge.js
 /www/js/rbmerge.meta.js
+/www/Gemfile.lock
+/www/_site

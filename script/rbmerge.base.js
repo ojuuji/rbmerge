@@ -113,7 +113,7 @@ function parse() {
     table = document.getElementsByTagName('table')[0].innerHTML;
   }
 
-  if (!table.match(/d<tr>\s*<th>Image<\/th>\s*<th>Part Num<\/th>\s*<th>Quantity<\/th>\s*<th>Color<\/th>\s*<th>Description<\/th>\s*<\/tr>/)) {
+  if (!table.match(/<tr>\s*<th>Image<\/th>\s*<th>Part Num<\/th>\s*<th>Quantity<\/th>\s*<th>Color<\/th>\s*<th>Description<\/th>\s*<\/tr>/)) {
     document.getElementsByTagName('body')[0].innerHTML = `<div style="margin: 10pt">
 <h1 style='background-color: red; color: white'>${ME}: parse error</h1>
 <p>Document does not contain a table in the expected format. Please create <a href="https://github.com/ojuuji/rbmerge/issues">an issue</a> if you believe this is wrong.</p>
